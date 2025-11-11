@@ -538,6 +538,145 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
+    
+    /* 新增样式：已完成笔记区域 */
+    .completed-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: var(--font-weight-bold);
+      margin-bottom: 12px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    
+    .completed-notes {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .completed-note {
+      background: var(--card);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+    
+    .completed-note:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    
+    .completed-note .note-title {
+      text-decoration: line-through;
+    }
+    
+    /* Base64 模态框样式 */
+    .base64-modal textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+    
+    .base64-modal textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+    
+    .base64-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+    
+    .copy-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: var(--font-weight-medium);
+      transition: all 0.3s ease;
+    }
+    
+    .copy-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+    
+    /* Base64 操作选择样式 */
+    .base64-mode-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: var(--font-weight-medium);
+      transition: all 0.3s ease;
+    }
+    
+    .mode-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .mode-btn:hover:not(.active) {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .base64-section {
+      display: none;
+    }
+    
+    .base64-section.active {
+      display: block;
+    }
+    
+    .export-info {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -569,6 +708,7 @@
         <div class="btn" id="newNote">New Note</div>
         <div class="btn" id="export">Export Data</div>
         <div class="btn" id="import">Import Data</div>
+        <div class="btn" id="base64Data">Base64 Data</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
       </div>
     </div>
@@ -599,6 +739,11 @@
           </div>
         </div>
         <div class="noteList" id="notes"></div>
+        <!-- 新增已完成笔记区域 -->
+        <div class="completed-section" id="completedSection" style="display:none">
+          <div class="section-title" data-t="completedNotes">Completed Notes</div>
+          <div class="completed-notes" id="completedNotesList"></div>
+        </div>
       </section>
       <aside>
         <div style="background:var(--card);padding:16px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 4px 12px var(--shadow)">
@@ -657,6 +802,51 @@
     </div>
   </div>
 
+  <!-- Base64 导出导入模态框 -->
+  <div class="modal base64-modal" id="base64Modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="base64ModalTitle">Base64 Data</div>
+        <button class="close-modal" id="closeBase64Modal">&times;</button>
+      </div>
+      
+      <!-- 模式选择器 -->
+      <div class="base64-mode-selector">
+        <button class="mode-btn active" id="exportModeBtn" data-mode="export">Export</button>
+        <button class="mode-btn" id="importModeBtn" data-mode="import">Import</button>
+      </div>
+      
+      <!-- 导出部分 -->
+      <div class="base64-section active" id="exportSection">
+        <div class="form-group">
+          <label for="base64ExportData" data-t="base64ExportLabel">Base64 Export Data</label>
+          <textarea id="base64ExportData" placeholder="Base64 data will be automatically generated" readonly></textarea>
+        </div>
+        <div class="export-info" data-t="exportInfo">Export data is automatically generated when opening this section</div>
+        <div class="base64-actions">
+          <button class="btn btn-success" id="copyExport" data-t="copyExport">Copy to Clipboard</button>
+          <button class="btn" id="refreshExport" data-t="refreshExport">Refresh Data</button>
+        </div>
+      </div>
+      
+      <!-- 导入部分 -->
+      <div class="base64-section" id="importSection">
+        <div class="form-group">
+          <label for="base64ImportData" data-t="base64ImportLabel">Base64 Import Data</label>
+          <textarea id="base64ImportData" placeholder="Paste Base64 data here to import"></textarea>
+        </div>
+        <div class="base64-actions">
+          <button class="btn" id="pasteImport" data-t="pasteImport">Paste from Clipboard</button>
+          <button class="btn btn-success" id="importFromBase64" data-t="importFromBase64">Import Data</button>
+        </div>
+      </div>
+      
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <button class="btn" id="closeBase64" data-t="closeBase64">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const UI = {
       cn: {
@@ -700,7 +890,26 @@
         notificationTip: '提示：首次设置提醒时会请求通知权限，请允许浏览器发送桌面通知',
         totalNotes: '总笔记',
         activeReminders: '活跃提醒',
-        completedNotes: '已完成'
+        completedNotes: '已完成',
+        undoComplete: '撤销完成',
+        completedNotesSection: '已完成笔记',
+        base64Data: 'Base64 数据',
+        base64ExportLabel: 'Base64 导出数据',
+        base64ImportLabel: 'Base64 导入数据',
+        copyExport: '复制到剪贴板',
+        refreshExport: '刷新数据',
+        pasteImport: '从剪贴板粘贴',
+        importFromBase64: '导入数据',
+        closeBase64: '关闭',
+        base64ExportSuccess: 'Base64 导出数据已生成！',
+        base64ImportSuccess: 'Base64 导入成功！',
+        base64ImportError: 'Base64 导入失败，请检查数据格式',
+        copySuccess: '已复制到剪贴板！',
+        pasteSuccess: '已从剪贴板粘贴数据！',
+        pasteError: '无法从剪贴板读取数据',
+        exportMode: '导出',
+        importMode: '导入',
+        exportInfo: '打开此页面时自动生成导出数据'
       },
       en: {
         title: 'Simple Notebook',
@@ -743,12 +952,33 @@
         notificationTip: 'Tip: First time setting a reminder will request notification permission, please allow browser to send desktop notifications',
         totalNotes: 'Total Notes',
         activeReminders: 'Active Reminders',
-        completedNotes: 'Completed'
+        completedNotes: 'Completed',
+        undoComplete: 'Undo Complete',
+        completedNotesSection: 'Completed Notes',
+        base64Data: 'Base64 Data',
+        base64ExportLabel: 'Base64 Export Data',
+        base64ImportLabel: 'Base64 Import Data',
+        copyExport: 'Copy to Clipboard',
+        refreshExport: 'Refresh Data',
+        pasteImport: 'Paste from Clipboard',
+        importFromBase64: 'Import Data',
+        closeBase64: 'Close',
+        base64ExportSuccess: 'Base64 export data generated!',
+        base64ImportSuccess: 'Base64 import successful!',
+        base64ImportError: 'Base64 import failed, please check data format',
+        copySuccess: 'Copied to clipboard!',
+        pasteSuccess: 'Data pasted from clipboard!',
+        pasteError: 'Unable to read data from clipboard',
+        exportMode: 'Export',
+        importMode: 'Import',
+        exportInfo: 'Export data is automatically generated when opening this section'
       }
     };
 
     const app = document.getElementById('app');
     const notesEl = document.getElementById('notes');
+    const completedSection = document.getElementById('completedSection');
+    const completedNotesList = document.getElementById('completedNotesList');
     const remindersEl = document.getElementById('reminders');
     const q = document.getElementById('q');
     const langBtn = document.getElementById('lang');
@@ -772,11 +1002,26 @@
     const closeEditModal = document.getElementById('closeEditModal');
     const cancelEdit = document.getElementById('cancelEdit');
     const saveEdit = document.getElementById('saveEdit');
+    const base64Modal = document.getElementById('base64Modal');
+    const base64ModalTitle = document.getElementById('base64ModalTitle');
+    const exportModeBtn = document.getElementById('exportModeBtn');
+    const importModeBtn = document.getElementById('importModeBtn');
+    const exportSection = document.getElementById('exportSection');
+    const importSection = document.getElementById('importSection');
+    const base64ExportData = document.getElementById('base64ExportData');
+    const base64ImportData = document.getElementById('base64ImportData');
+    const copyExport = document.getElementById('copyExport');
+    const refreshExport = document.getElementById('refreshExport');
+    const pasteImport = document.getElementById('pasteImport');
+    const importFromBase64 = document.getElementById('importFromBase64');
+    const closeBase64Modal = document.getElementById('closeBase64Modal');
+    const closeBase64 = document.getElementById('closeBase64');
     
     let notes = JSON.parse(localStorage.getItem('notes_v1') || '[]');
     let currentLang = app.getAttribute('data-lang') || 'en'; // 默认设为英文
     let theme = app.getAttribute('data-theme') || 'light';
     let currentNoteId = null;
+    let currentBase64Mode = 'export';
 
     // 请求通知权限
     function requestNotificationPermission() {
@@ -804,6 +1049,7 @@
       document.getElementById('newNote').textContent = pack.newNote;
       document.getElementById('export').textContent = pack.export;
       document.getElementById('import').textContent = pack.import;
+      document.getElementById('base64Data').textContent = pack.base64Data;
       document.getElementById('save').textContent = pack.save;
       document.getElementById('clear').textContent = pack.clear;
       
@@ -815,6 +1061,7 @@
       // 更新模态框标题
       reminderModalTitle.textContent = pack.reminderModalTitle;
       editModalTitle.textContent = pack.editModalTitle;
+      base64ModalTitle.textContent = pack.base64Data;
       
       // 更新语言按钮
       langBtn.textContent = currentLang === 'cn' ? 'EN' : '中文';
@@ -825,6 +1072,15 @@
         if (index === 1) el.textContent = pack.activeReminders;
         if (index === 2) el.textContent = pack.completedNotes;
       });
+      
+      // 更新Base64模态框文本
+      exportModeBtn.textContent = pack.exportMode;
+      importModeBtn.textContent = pack.importMode;
+      copyExport.textContent = pack.copyExport;
+      refreshExport.textContent = pack.refreshExport;
+      pasteImport.textContent = pack.pasteImport;
+      importFromBase64.textContent = pack.importFromBase64;
+      closeBase64.textContent = pack.closeBase64;
     }
 
     function applyTheme() {
@@ -875,6 +1131,7 @@
     function saveNotes() {
       localStorage.setItem('notes_v1', JSON.stringify(notes));
       renderNotes();
+      renderCompletedNotes();
       renderReminders();
       updateStats();
     }
@@ -987,12 +1244,9 @@
 
     function renderNotes(filter = '') {
       notesEl.innerHTML = '';
-      const list = notes.filter(n => {
-        const text = (n.title + ' ' + n.content).toLowerCase();
-        return text.includes(filter.toLowerCase());
-      });
+      const activeNotes = notes.filter(n => !n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
 
-      if (list.length === 0) {
+      if (activeNotes.length === 0) {
         const pack = currentLang === 'cn' ? UI.cn : UI.en;
         notesEl.innerHTML = `
           <div class="empty-state">
@@ -1005,9 +1259,9 @@
         return;
       }
 
-      for (const n of list) {
+      for (const n of activeNotes) {
         const el = document.createElement('div');
-        el.className = `note ${n.done ? 'done' : ''}`;
+        el.className = `note`;
         
         const pack = currentLang === 'cn' ? UI.cn : UI.en;
         const remindDisplay = n.remindAt ? 
@@ -1028,11 +1282,55 @@
             <div style="flex:1"></div>
             <button class="btn btn-warning" data-action="set-reminder" data-id="${n.id}">${pack.setReminder}</button>
             <button class="btn btn-success" data-action="edit" data-id="${n.id}">${pack.edit}</button>
-            <button class="btn" data-action="done" data-id="${n.id}">${n.done ? pack.completed : pack.done}</button>
+            <button class="btn" data-action="done" data-id="${n.id}">${pack.done}</button>
             <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
           </div>
         `;
         notesEl.appendChild(el);
+      }
+    }
+
+    function renderCompletedNotes(filter = '') {
+      const completedNotes = notes.filter(n => n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
+      
+      if (completedNotes.length === 0) {
+        completedSection.style.display = 'none';
+        return;
+      }
+      
+      completedSection.style.display = 'block';
+      completedNotesList.innerHTML = '';
+      
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      
+      // 更新已完成笔记区域的标题
+      document.querySelector('#completedSection .section-title').textContent = pack.completedNotesSection;
+      
+      for (const n of completedNotes) {
+        const el = document.createElement('div');
+        el.className = `completed-note`;
+        
+        const remindDisplay = n.remindAt ? 
+          `<span class='reminderTime'>${pack.reminder}: ${(new Date(n.remindAt)).toLocaleString()}</span>` : 
+          pack.noReminder;
+          
+        el.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:start">
+            <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
+            <div style="text-align:right">
+              <div class="pill">${new Date(n.createdAt).toLocaleString()}</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;color:var(--text-secondary);font-size:14px">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center" class="meta">
+            <div class="pill">${remindDisplay}</div>
+            <div class="pill">ID:${n.id}</div>
+            <div style="flex:1"></div>
+            <button class="btn btn-success" data-action="undo-done" data-id="${n.id}">${pack.undoComplete}</button>
+            <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
+          </div>
+        `;
+        completedNotesList.appendChild(el);
       }
     }
 
@@ -1155,6 +1453,91 @@
       reader.readAsText(file);
     }
 
+    // Base64 功能
+    function openBase64Modal() {
+      base64Modal.style.display = 'flex';
+      // 默认显示导出模式，并自动生成数据
+      switchBase64Mode('export');
+      generateBase64Export(); // 自动生成导出数据
+    }
+
+    function switchBase64Mode(mode) {
+      currentBase64Mode = mode;
+      
+      // 更新按钮状态
+      exportModeBtn.classList.toggle('active', mode === 'export');
+      importModeBtn.classList.toggle('active', mode === 'import');
+      
+      // 更新内容区域
+      exportSection.classList.toggle('active', mode === 'export');
+      importSection.classList.toggle('active', mode === 'import');
+      
+      // 如果是导出模式，自动生成数据
+      if (mode === 'export') {
+        generateBase64Export();
+      } else {
+        // 清空导入区域
+        base64ImportData.value = '';
+      }
+    }
+
+    function generateBase64Export() {
+      const data = JSON.stringify(notes);
+      const base64 = btoa(unescape(encodeURIComponent(data)));
+      base64ExportData.value = base64;
+      
+      // 自动选中文本以便用户复制
+      base64ExportData.select();
+    }
+
+    function copyBase64ToClipboard() {
+      base64ExportData.select();
+      document.execCommand('copy');
+      
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      alert(pack.copySuccess);
+    }
+
+    function refreshBase64Export() {
+      generateBase64Export();
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      alert(pack.base64ExportSuccess);
+    }
+
+    function pasteFromClipboard() {
+      navigator.clipboard.readText().then(text => {
+        base64ImportData.value = text;
+        const pack = currentLang === 'cn' ? UI.cn : UI.en;
+        alert(pack.pasteSuccess);
+      }).catch(err => {
+        const pack = currentLang === 'cn' ? UI.cn : UI.en;
+        alert(pack.pasteError);
+      });
+    }
+
+    function importFromBase64Data() {
+      try {
+        const base64 = base64ImportData.value.trim();
+        if (!base64) return;
+        
+        const jsonString = decodeURIComponent(escape(atob(base64)));
+        const importedNotes = JSON.parse(jsonString);
+        
+        if (Array.isArray(importedNotes)) {
+          notes = importedNotes;
+          saveNotes();
+          base64Modal.style.display = 'none';
+          const pack = currentLang === 'cn' ? UI.cn : UI.en;
+          alert(pack.base64ImportSuccess);
+        } else {
+          throw new Error('Invalid format');
+        }
+      } catch (error) {
+        const pack = currentLang === 'cn' ? UI.cn : UI.en;
+        alert(pack.base64ImportError);
+      }
+    }
+
     // Event Listeners
     document.getElementById('save').addEventListener('click', () => {
       const t = document.getElementById('title').value.trim();
@@ -1182,6 +1565,19 @@
       }
     });
 
+    // Base64 数据按钮事件
+    document.getElementById('base64Data').addEventListener('click', openBase64Modal);
+
+    // Base64 模态框事件
+    exportModeBtn.addEventListener('click', () => switchBase64Mode('export'));
+    importModeBtn.addEventListener('click', () => switchBase64Mode('import'));
+    copyExport.addEventListener('click', copyBase64ToClipboard);
+    refreshExport.addEventListener('click', refreshBase64Export);
+    pasteImport.addEventListener('click', pasteFromClipboard);
+    importFromBase64.addEventListener('click', importFromBase64Data);
+    closeBase64Modal.addEventListener('click', () => base64Modal.style.display = 'none');
+    closeBase64.addEventListener('click', () => base64Modal.style.display = 'none');
+
     notesEl.addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
@@ -1201,6 +1597,22 @@
       }
       if (btn.dataset.action === 'edit') {
         openEditModal(id);
+      }
+    });
+
+    completedNotesList.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      
+      if (btn.dataset.action === 'delete') {
+        if (confirm(pack.deleteConfirm)) {
+          deleteNote(id);
+        }
+      }
+      if (btn.dataset.action === 'undo-done') {
+        toggleDone(id);
       }
     });
 
@@ -1247,12 +1659,20 @@
       if (e.target === editModal) {
         closeEditModalFunc();
       }
+      if (e.target === base64Modal) {
+        base64Modal.style.display = 'none';
+      }
     });
 
-    q.addEventListener('input', () => renderNotes(q.value));
+    q.addEventListener('input', () => {
+      renderNotes(q.value);
+      renderCompletedNotes(q.value);
+    });
+    
     document.getElementById('clear').addEventListener('click', () => {
       q.value = '';
       renderNotes();
+      renderCompletedNotes();
     });
 
     langBtn.addEventListener('click', () => {
@@ -1260,6 +1680,7 @@
       app.setAttribute('data-lang', currentLang);
       applyLang();
       renderNotes(q.value);
+      renderCompletedNotes(q.value);
       renderReminders();
     });
 
@@ -1273,6 +1694,7 @@
     applyLang();
     applyTheme();
     renderNotes();
+    renderCompletedNotes();
     renderReminders();
     updateStats();
     setTimeout(checkReminders, 2000);
