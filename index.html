@@ -3,7 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple Notebook — Notebook</title>
+  <title>Simple Notebook — Cloud & Local</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  
   <style>
     :root {
       --bg: #f8fafc;
@@ -142,6 +148,17 @@
     
     .btn:active {
       transform: translateY(0);
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-light);
+      border-color: var(--accent-light);
     }
     
     .btn-danger {
@@ -539,160 +556,368 @@
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
     
-    /* 新增样式：已完成笔记区域 */
-    .completed-section {
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
+    /* 登录相关样式 */
+    .auth-modal {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
     }
     
-    .section-title {
-      font-size: 16px;
-      font-weight: var(--font-weight-bold);
-      margin-bottom: 12px;
-      color: var(--text);
+    .auth-container {
+      background: var(--card);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid var(--border);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .auth-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-heavy);
+      font-size: 28px;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+      margin: 0 auto 16px;
     }
     
-    .section-title::before {
-      content: '';
-      display: block;
-      width: 4px;
-      height: 16px;
-      background: var(--accent);
-      border-radius: 2px;
-    }
-    
-    .completed-notes {
-      display: grid;
-      gap: 12px;
-    }
-    
-    .completed-note {
-      background: var(--card);
-      padding: 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      opacity: 0.7;
-      transition: all 0.3s ease;
-    }
-    
-    .completed-note:hover {
-      opacity: 1;
-      transform: translateY(-2px);
-    }
-    
-    .completed-note .note-title {
-      text-decoration: line-through;
-    }
-    
-    /* Base64 模态框样式 */
-    .base64-modal textarea {
-      width: 100%;
-      min-height: 200px;
-      padding: 12px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: transparent;
+    .auth-title {
+      font-weight: var(--font-weight-bold);
+      font-size: 24px;
+      margin-bottom: 8px;
       color: var(--text);
-      font-family: monospace;
+    }
+    
+    .auth-subtitle {
+      color: var(--muted);
       font-size: 14px;
-      resize: vertical;
     }
     
-    .base64-modal textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-    }
-    
-    .base64-actions {
+    .auth-tabs {
       display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      justify-content: flex-end;
-    }
-    
-    .copy-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      font-weight: var(--font-weight-medium);
-      transition: all 0.3s ease;
-    }
-    
-    .copy-btn:hover {
-      background: var(--accent-light);
-      transform: translateY(-2px);
-    }
-    
-    /* Base64 操作选择样式 */
-    .base64-mode-selector {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 24px;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 16px;
     }
     
-    .mode-btn {
+    .auth-tab {
       flex: 1;
-      padding: 12px;
       text-align: center;
+      padding: 12px;
       background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+      border: none;
+      border-bottom: 2px solid transparent;
       cursor: pointer;
       font-weight: var(--font-weight-medium);
+      color: var(--muted);
       transition: all 0.3s ease;
     }
     
-    .mode-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
+    .auth-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
     }
     
-    .mode-btn:hover:not(.active) {
-      background: rgba(124, 58, 237, 0.1);
-      border-color: var(--accent);
-    }
-    
-    .base64-section {
+    .auth-form {
       display: none;
     }
     
-    .base64-section.active {
+    .auth-form.active {
       display: block;
     }
     
-    .export-info {
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .auth-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+    }
+    
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .user-menu {
+      position: relative;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+    }
+    
+    .user-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 24px var(--shadow);
+      border: 1px solid var(--border);
+      padding: 8px;
+      min-width: 180px;
+      z-index: 100;
+      display: none;
+    }
+    
+    .user-dropdown.active {
+      display: block;
+    }
+    
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text);
+      text-decoration: none;
+    }
+    
+    .user-dropdown-item:hover {
+      background: rgba(124, 58, 237, 0.1);
+    }
+    
+    .user-dropdown-item.danger {
+      color: var(--danger);
+    }
+    
+    .user-dropdown-item.danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+    
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-size: 12px;
       color: var(--muted);
-      margin-top: 8px;
-      text-align: center;
+    }
+    
+    .sync-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    
+    .sync-indicator.syncing {
+      background: var(--warning);
+      animation: pulse 1.5s infinite;
+    }
+    
+    .sync-indicator.error {
+      background: var(--danger);
+    }
+    
+    .sync-indicator.local {
+      background: var(--info);
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(124, 58, 237, 0.1);
+      border-left: 4px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .auth-optional {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    
+    .storage-mode {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .mode-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .mode-indicator.cloud {
+      background: var(--success);
+    }
+    
+    .mode-indicator.local {
+      background: var(--info);
     }
   </style>
 </head>
 <body>
+  <!-- 登录模态框（可选） -->
+  <div class="auth-modal" id="authModal">
+    <div class="auth-container">
+      <div class="auth-optional">
+        <button class="btn" id="skipAuth">Skip & Use Locally</button>
+      </div>
+      <div class="auth-header">
+        <div class="auth-logo">笔</div>
+        <div class="auth-title" data-t="authTitle">Simple Notebook</div>
+        <div class="auth-subtitle" data-t="authSubtitle">Login for cloud sync, or use locally</div>
+      </div>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTab" data-t="loginTab">Login</button>
+        <button class="auth-tab" id="registerTab" data-t="registerTab">Register</button>
+      </div>
+      
+      <div id="authError" class="error-message" style="display: none;"></div>
+      
+      <form class="auth-form active" id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail" data-t="emailLabel">Email</label>
+          <input type="email" id="loginEmail" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword" data-t="passwordLabel">Password</label>
+          <input type="password" id="loginPassword" class="form-control" required>
+        </div>
+        <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <input type="checkbox" id="rememberMe">
+            <label for="rememberMe" style="display: inline; margin-left: 6px;" data-t="rememberMe">Remember me</label>
+          </div>
+          <a href="#" id="forgotPassword" data-t="forgotPassword">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;" id="loginBtn">
+          <span data-t="loginBtn">Login</span>
+          <div class="spinner" style="display: none; width: 16px; height: 16px;"></div>
+        </button>
+      </form>
+      
+      <form class="auth-form" id="registerForm">
+        <div class="form-group">
+          <label for="registerName" data-t="nameLabel">Full Name</label>
+          <input type="text" id="registerName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="registerEmail" data-t="emailLabel">Email</label>
+          <input type="email" id="registerEmail" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword" data-t="passwordLabel">Password</label>
+          <input type="password" id="registerPassword" class="form-control" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="registerConfirmPassword" data-t="confirmPasswordLabel">Confirm Password</label>
+          <input type="password" id="registerConfirmPassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;" id="registerBtn">
+          <span data-t="registerBtn">Create Account</span>
+          <div class="spinner" style="display: none; width: 16px; height: 16px;"></div>
+        </button>
+      </form>
+      
+      <div class="auth-footer">
+        <div data-t="authFooter">By creating an account, you agree to our <a href="#" data-t="termsLink">Terms of Service</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主应用界面 -->
   <div class="app" id="app" data-lang="en" data-theme="light">
     <header>
       <div class="brand">
         <div class="logo">笔</div>
         <div>
           <h1 data-t="title">Simple Notebook</h1>
-          <div style="font-size:14px;color:var(--muted)" data-t="subtitle">Lightweight · Search · Reminders · Lang & Darkmode</div>
+          <div style="font-size:14px;color:var(--muted)" data-t="subtitle">Cloud Sync · Lightweight · Search · Reminders</div>
         </div>
       </div>
       <div class="controls">
         <div class="search btn" style="min-width:280px;display:flex;align-items:center;">
           <input id="q" placeholder="Search notes" style="flex:1;border:0;background:transparent;outline:none;font-size:14px;color:var(--text)" />
           <button class="btn" id="clear">Clear</button>
+        </div>
+        <div class="sync-status" id="syncStatus">
+          <div class="sync-indicator local" id="syncIndicator"></div>
+          <span id="syncText" data-t="local">Local</span>
+        </div>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="user-dropdown-item" id="loginLink">
+              <span data-t="login">Login for Cloud Sync</span>
+            </div>
+            <div class="user-dropdown-item" id="exportLink">
+              <span data-t="exportData">Export Data</span>
+            </div>
+            <div class="user-dropdown-item" id="importLink">
+              <span data-t="importData">Import Data</span>
+            </div>
+          </div>
         </div>
         <div class="btn" id="lang">中文</div>
         <div class="btn" id="theme">🌙</div>
@@ -706,9 +931,7 @@
       <div style="flex:1"></div>
       <div style="display:flex;gap:10px;align-items:center">
         <div class="btn" id="newNote">New Note</div>
-        <div class="btn" id="export">Export Data</div>
-        <div class="btn" id="import">Import Data</div>
-        <div class="btn" id="base64Data">Base64 Data</div>
+        <div class="btn" id="syncNow" style="display:none">Sync Now</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
       </div>
     </div>
@@ -752,14 +975,14 @@
         </div>
         <div style="background:var(--card);padding:16px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 4px 12px var(--shadow);margin-top:16px">
           <div style="font-weight:700;font-size:16px;margin-bottom:8px" data-t="infoTitle">Info</div>
-          <div style="color:var(--muted);font-size:14px;margin-top:8px" data-t="infoText">Supports local storage. Reminders are checked when page opens and use desktop notifications (requires permission).</div>
+          <div style="color:var(--muted);font-size:14px;margin-top:8px" id="storageInfo" data-t="localStorageInfo">Your notes are stored locally in your browser.</div>
           <div style="color:var(--muted);font-size:12px;margin-top:8px;padding:8px;background:rgba(0,0,0,0.05);border-radius:var(--radius-md)">
             💡 <span data-t="notificationTip">Tip: First time setting a reminder will request notification permission, please allow browser to send desktop notifications</span>
           </div>
         </div>
       </aside>
     </main>
-    <footer data-t="footer">Simple Notebook — Beautiful UI · Supports English/Chinese · Data saved locally in browser (localStorage)</footer>
+    <footer data-t="footer">Simple Notebook — Use locally or login for cloud sync · Beautiful UI · Supports English/Chinese</footer>
   </div>
 
   <!-- 设置提醒模态框 -->
@@ -802,68 +1025,75 @@
     </div>
   </div>
 
-  <!-- Base64 导出导入模态框 -->
-  <div class="modal base64-modal" id="base64Modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="base64ModalTitle">Base64 Data</div>
-        <button class="close-modal" id="closeBase64Modal">&times;</button>
-      </div>
-      
-      <!-- 模式选择器 -->
-      <div class="base64-mode-selector">
-        <button class="mode-btn active" id="exportModeBtn" data-mode="export">Export</button>
-        <button class="mode-btn" id="importModeBtn" data-mode="import">Import</button>
-      </div>
-      
-      <!-- 导出部分 -->
-      <div class="base64-section active" id="exportSection">
-        <div class="form-group">
-          <label for="base64ExportData" data-t="base64ExportLabel">Base64 Export Data</label>
-          <textarea id="base64ExportData" placeholder="Base64 data will be automatically generated" readonly></textarea>
-        </div>
-        <div class="export-info" data-t="exportInfo">Export data is automatically generated when opening this section</div>
-        <div class="base64-actions">
-          <button class="btn btn-success" id="copyExport" data-t="copyExport">Copy to Clipboard</button>
-          <button class="btn" id="refreshExport" data-t="refreshExport">Refresh Data</button>
-        </div>
-      </div>
-      
-      <!-- 导入部分 -->
-      <div class="base64-section" id="importSection">
-        <div class="form-group">
-          <label for="base64ImportData" data-t="base64ImportLabel">Base64 Import Data</label>
-          <textarea id="base64ImportData" placeholder="Paste Base64 data here to import"></textarea>
-        </div>
-        <div class="base64-actions">
-          <button class="btn" id="pasteImport" data-t="pasteImport">Paste from Clipboard</button>
-          <button class="btn btn-success" id="importFromBase64" data-t="importFromBase64">Import Data</button>
-        </div>
-      </div>
-      
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
-        <button class="btn" id="closeBase64" data-t="closeBase64">Close</button>
-      </div>
-    </div>
-  </div>
-
   <script>
+    // Firebase配置
+    const firebaseConfig = {
+      apiKey: "AIzaSyC8o4g-Tx51lPWaXKw0MxeDwtkOET03tu8",
+      authDomain: "simple-notebook-1043d.firebaseapp.com",
+      projectId: "simple-notebook-1043d",
+      storageBucket: "simple-notebook-1043d.firebasestorage.app",
+      messagingSenderId: "1021479179837",
+      appId: "1:1021479179837:web:acffb829adaf7136b73c54",
+      measurementId: "G-3MRF1J3E1W"
+    };
+
+    // 初始化Firebase
+    let auth, db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      console.log("Firebase initialized successfully");
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+    }
+
+    // 应用状态管理
+    let currentUser = null;
+    let notes = [];
+    let notesUnsubscribe = null;
+    let currentLang = 'en';
+    let theme = 'light';
+    let isUsingCloud = false;
+
+    // UI文本
     const UI = {
       cn: {
+        authTitle: '简约笔记',
+        authSubtitle: '登录使用云端同步，或本地使用',
+        loginTab: '登录',
+        registerTab: '注册',
+        emailLabel: '邮箱',
+        passwordLabel: '密码',
+        nameLabel: '姓名',
+        confirmPasswordLabel: '确认密码',
+        rememberMe: '记住我',
+        forgotPassword: '忘记密码?',
+        loginBtn: '登录',
+        registerBtn: '创建账户',
+        authFooter: '创建账户即表示您同意我们的',
+        termsLink: '服务条款',
+        login: '登录使用云端同步',
+        exportData: '导出数据',
+        importData: '导入数据',
+        logout: '退出登录',
+        synced: '已同步',
+        syncing: '同步中',
+        syncError: '同步失败',
+        local: '本地',
         title: '简约笔记',
-        subtitle: '轻量 · 支持搜索 · 提醒 · 中英切换 · 暗黑',
+        subtitle: '云端同步 · 轻量 · 支持搜索 · 提醒',
         help: '每条笔记会保存创建时间，可设置提醒',
         searchPlaceholder: '搜索笔记',
         newNote: '新建笔记',
-        export: '导出数据',
-        import: '导入数据',
         save: '保存',
         clear: '清除',
         titlePlaceholder: '标题',
         contentPlaceholder: '写点什么...',
         remindersTitle: '提醒中心',
         infoTitle: '说明',
-        infoText: '支持本地存储，提醒会在页面打开时检查并使用桌面通知（需允许）。',
+        localStorageInfo: '您的笔记存储在浏览器本地。',
+        cloudStorageInfo: '您的笔记安全存储在云端，并在所有设备间同步。',
         noReminders: '暂无提醒',
         noNotes: '暂无笔记，创建第一条笔记开始使用',
         deleteConfirm: '确认删除这条笔记？',
@@ -881,7 +1111,7 @@
         cancel: '取消',
         saveReminder: '保存提醒',
         saveEdit: '保存修改',
-        footer: 'Simple Notebook — UI 精美 · 支持中英 · 本地数据保存在浏览器 (localStorage)',
+        footer: 'Simple Notebook — 本地使用或登录云端同步 · UI 精美 · 支持中英',
         importSuccess: '数据导入成功！',
         importError: '导入失败，请检查文件格式',
         reminderTimeLabel: '提醒时间',
@@ -893,39 +1123,45 @@
         completedNotes: '已完成',
         undoComplete: '撤销完成',
         completedNotesSection: '已完成笔记',
-        base64Data: 'Base64 数据',
-        base64ExportLabel: 'Base64 导出数据',
-        base64ImportLabel: 'Base64 导入数据',
-        copyExport: '复制到剪贴板',
-        refreshExport: '刷新数据',
-        pasteImport: '从剪贴板粘贴',
-        importFromBase64: '导入数据',
-        closeBase64: '关闭',
-        base64ExportSuccess: 'Base64 导出数据已生成！',
-        base64ImportSuccess: 'Base64 导入成功！',
-        base64ImportError: 'Base64 导入失败，请检查数据格式',
-        copySuccess: '已复制到剪贴板！',
-        pasteSuccess: '已从剪贴板粘贴数据！',
-        pasteError: '无法从剪贴板读取数据',
-        exportMode: '导出',
-        importMode: '导入',
-        exportInfo: '打开此页面时自动生成导出数据'
+        skipAuth: '跳过，本地使用',
+        syncNow: '立即同步'
       },
       en: {
+        authTitle: 'Simple Notebook',
+        authSubtitle: 'Login for cloud sync, or use locally',
+        loginTab: 'Login',
+        registerTab: 'Register',
+        emailLabel: 'Email',
+        passwordLabel: 'Password',
+        nameLabel: 'Full Name',
+        confirmPasswordLabel: 'Confirm Password',
+        rememberMe: 'Remember me',
+        forgotPassword: 'Forgot password?',
+        loginBtn: 'Login',
+        registerBtn: 'Create Account',
+        authFooter: 'By creating an account, you agree to our',
+        termsLink: 'Terms of Service',
+        login: 'Login for Cloud Sync',
+        exportData: 'Export Data',
+        importData: 'Import Data',
+        logout: 'Logout',
+        synced: 'Synced',
+        syncing: 'Syncing',
+        syncError: 'Sync Error',
+        local: 'Local',
         title: 'Simple Notebook',
-        subtitle: 'Lightweight · Search · Reminders · Lang & Darkmode',
+        subtitle: 'Cloud Sync · Lightweight · Search · Reminders',
         help: 'Each note stores creation date. Set reminders.',
         searchPlaceholder: 'Search notes',
         newNote: 'New Note',
-        export: 'Export Data',
-        import: 'Import Data',
         save: 'Save',
         clear: 'Clear',
         titlePlaceholder: 'Title',
         contentPlaceholder: 'Write something...',
         remindersTitle: 'Reminders',
         infoTitle: 'Info',
-        infoText: 'Supports local storage. Reminders are checked when page opens and use desktop notifications (requires permission).',
+        localStorageInfo: 'Your notes are stored locally in your browser.',
+        cloudStorageInfo: 'Your notes are securely stored in the cloud and synced across all your devices.',
         noReminders: 'No reminders',
         noNotes: 'No notes yet, create your first note to get started',
         deleteConfirm: 'Confirm delete this note?',
@@ -943,7 +1179,7 @@
         cancel: 'Cancel',
         saveReminder: 'Save Reminder',
         saveEdit: 'Save Changes',
-        footer: 'Simple Notebook — Beautiful UI · Supports English/Chinese · Data saved locally in browser (localStorage)',
+        footer: 'Simple Notebook — Use locally or login for cloud sync · Beautiful UI · Supports English/Chinese',
         importSuccess: 'Data imported successfully!',
         importError: 'Import failed, please check file format',
         reminderTimeLabel: 'Reminder Time',
@@ -955,73 +1191,613 @@
         completedNotes: 'Completed',
         undoComplete: 'Undo Complete',
         completedNotesSection: 'Completed Notes',
-        base64Data: 'Base64 Data',
-        base64ExportLabel: 'Base64 Export Data',
-        base64ImportLabel: 'Base64 Import Data',
-        copyExport: 'Copy to Clipboard',
-        refreshExport: 'Refresh Data',
-        pasteImport: 'Paste from Clipboard',
-        importFromBase64: 'Import Data',
-        closeBase64: 'Close',
-        base64ExportSuccess: 'Base64 export data generated!',
-        base64ImportSuccess: 'Base64 import successful!',
-        base64ImportError: 'Base64 import failed, please check data format',
-        copySuccess: 'Copied to clipboard!',
-        pasteSuccess: 'Data pasted from clipboard!',
-        pasteError: 'Unable to read data from clipboard',
-        exportMode: 'Export',
-        importMode: 'Import',
-        exportInfo: 'Export data is automatically generated when opening this section'
+        skipAuth: 'Skip & Use Locally',
+        syncNow: 'Sync Now'
       }
     };
 
+    // DOM元素
     const app = document.getElementById('app');
-    const notesEl = document.getElementById('notes');
-    const completedSection = document.getElementById('completedSection');
-    const completedNotesList = document.getElementById('completedNotesList');
-    const remindersEl = document.getElementById('reminders');
-    const q = document.getElementById('q');
-    const langBtn = document.getElementById('lang');
-    const themeBtn = document.getElementById('theme');
-    const datetimeEl = document.getElementById('datetime');
-    const lunarEl = document.getElementById('lunar');
-    const fileInput = document.getElementById('fileInput');
-    const totalNotesEl = document.getElementById('totalNotes');
-    const activeRemindersEl = document.getElementById('activeReminders');
-    const completedNotesEl = document.getElementById('completedNotes');
-    const reminderModal = document.getElementById('reminderModal');
-    const reminderModalTitle = document.getElementById('reminderModalTitle');
-    const reminderDateTime = document.getElementById('reminderDateTime');
-    const closeReminderModal = document.getElementById('closeReminderModal');
-    const cancelReminder = document.getElementById('cancelReminder');
-    const saveReminder = document.getElementById('saveReminder');
-    const editModal = document.getElementById('editModal');
-    const editModalTitle = document.getElementById('editModalTitle');
-    const editTitle = document.getElementById('editTitle');
-    const editContent = document.getElementById('editContent');
-    const closeEditModal = document.getElementById('closeEditModal');
-    const cancelEdit = document.getElementById('cancelEdit');
-    const saveEdit = document.getElementById('saveEdit');
-    const base64Modal = document.getElementById('base64Modal');
-    const base64ModalTitle = document.getElementById('base64ModalTitle');
-    const exportModeBtn = document.getElementById('exportModeBtn');
-    const importModeBtn = document.getElementById('importModeBtn');
-    const exportSection = document.getElementById('exportSection');
-    const importSection = document.getElementById('importSection');
-    const base64ExportData = document.getElementById('base64ExportData');
-    const base64ImportData = document.getElementById('base64ImportData');
-    const copyExport = document.getElementById('copyExport');
-    const refreshExport = document.getElementById('refreshExport');
-    const pasteImport = document.getElementById('pasteImport');
-    const importFromBase64 = document.getElementById('importFromBase64');
-    const closeBase64Modal = document.getElementById('closeBase64Modal');
-    const closeBase64 = document.getElementById('closeBase64');
-    
-    let notes = JSON.parse(localStorage.getItem('notes_v1') || '[]');
-    let currentLang = app.getAttribute('data-lang') || 'en'; // 默认设为英文
-    let theme = app.getAttribute('data-theme') || 'light';
-    let currentNoteId = null;
-    let currentBase64Mode = 'export';
+    const authModal = document.getElementById('authModal');
+    const authError = document.getElementById('authError');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const userAvatar = document.getElementById('userAvatar');
+    const userDropdown = document.getElementById('userDropdown');
+    const loginLink = document.getElementById('loginLink');
+    const exportLink = document.getElementById('exportLink');
+    const importLink = document.getElementById('importLink');
+    const syncStatus = document.getElementById('syncStatus');
+    const syncIndicator = document.getElementById('syncIndicator');
+    const syncText = document.getElementById('syncText');
+    const storageInfo = document.getElementById('storageInfo');
+    const skipAuth = document.getElementById('skipAuth');
+    const syncNow = document.getElementById('syncNow');
+
+    // 本地存储函数
+    function loadLocalNotes() {
+      const localNotes = localStorage.getItem('simple_notes_local');
+      if (localNotes) {
+        notes = JSON.parse(localNotes);
+      } else {
+        notes = [];
+      }
+      renderNotes();
+      renderCompletedNotes();
+      renderReminders();
+      updateStats();
+    }
+
+    function saveLocalNotes() {
+      localStorage.setItem('simple_notes_local', JSON.stringify(notes));
+    }
+
+    // 认证相关函数
+    function showAuthModal() {
+      authModal.style.display = 'flex';
+    }
+
+    function hideAuthModal() {
+      authModal.style.display = 'none';
+    }
+
+    function showAuthError(message) {
+      authError.textContent = message;
+      authError.style.display = 'block';
+    }
+
+    function hideAuthError() {
+      authError.style.display = 'none';
+    }
+
+    function setLoading(button, isLoading) {
+      const spinner = button.querySelector('.spinner');
+      const text = button.querySelector('span');
+      
+      if (isLoading) {
+        spinner.style.display = 'block';
+        text.style.display = 'none';
+        button.disabled = true;
+      } else {
+        spinner.style.display = 'none';
+        text.style.display = 'inline';
+        button.disabled = false;
+      }
+    }
+
+    function setSyncStatus(status) {
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      
+      syncIndicator.className = 'sync-indicator';
+      if (status === 'synced') {
+        syncIndicator.classList.add('synced');
+        syncText.textContent = pack.synced;
+        storageInfo.textContent = pack.cloudStorageInfo;
+        syncNow.style.display = 'none';
+      } else if (status === 'syncing') {
+        syncIndicator.classList.add('syncing');
+        syncText.textContent = pack.syncing;
+        storageInfo.textContent = pack.cloudStorageInfo;
+        syncNow.style.display = 'none';
+      } else if (status === 'error') {
+        syncIndicator.classList.add('error');
+        syncText.textContent = pack.syncError;
+        storageInfo.textContent = pack.cloudStorageInfo;
+        syncNow.style.display = 'block';
+      } else if (status === 'local') {
+        syncIndicator.classList.add('local');
+        syncText.textContent = pack.local;
+        storageInfo.textContent = pack.localStorageInfo;
+        syncNow.style.display = 'none';
+      }
+    }
+
+    function updateUserUI() {
+      if (currentUser) {
+        userAvatar.textContent = currentUser.displayName ? 
+          currentUser.displayName.charAt(0).toUpperCase() : 
+          currentUser.email.charAt(0).toUpperCase();
+        
+        // 更新用户菜单
+        userDropdown.innerHTML = `
+          <div class="user-dropdown-item" id="profileLink">
+            <span>${currentUser.displayName || currentUser.email}</span>
+          </div>
+          <div class="user-dropdown-item" id="exportLink">
+            <span data-t="exportData">Export Data</span>
+          </div>
+          <div class="user-dropdown-item danger" id="logoutLink">
+            <span data-t="logout">Logout</span>
+          </div>
+        `;
+        
+        // 重新绑定事件
+        document.getElementById('logoutLink').addEventListener('click', logout);
+      } else {
+        userAvatar.textContent = '?';
+        userDropdown.innerHTML = `
+          <div class="user-dropdown-item" id="loginLink">
+            <span data-t="login">Login for Cloud Sync</span>
+          </div>
+          <div class="user-dropdown-item" id="exportLink">
+            <span data-t="exportData">Export Data</span>
+          </div>
+          <div class="user-dropdown-item" id="importLink">
+            <span data-t="importData">Import Data</span>
+          </div>
+        `;
+        
+        // 重新绑定事件
+        document.getElementById('loginLink').addEventListener('click', showAuthModal);
+      }
+      
+      // 绑定导出导入事件
+      document.getElementById('exportLink').addEventListener('click', exportAllNotes);
+      document.getElementById('importLink').addEventListener('click', () => document.getElementById('fileInput').click());
+    }
+
+    // Firebase认证监听
+    auth.onAuthStateChanged((user) => {
+      console.log("Auth state changed:", user);
+      if (user) {
+        currentUser = user;
+        isUsingCloud = true;
+        updateUserUI();
+        loadCloudNotes();
+        hideAuthModal();
+        setSyncStatus('syncing');
+        
+        // 清空登录表单
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+      } else {
+        currentUser = null;
+        isUsingCloud = false;
+        if (notesUnsubscribe) {
+          notesUnsubscribe();
+          notesUnsubscribe = null;
+        }
+        updateUserUI();
+        setSyncStatus('local');
+      }
+    });
+
+    // 用户注册
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('registerConfirmPassword').value;
+      
+      // 验证输入
+      if (!name || !email || !password || !confirmPassword) {
+        showAuthError('Please fill in all fields');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showAuthError('Passwords do not match');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showAuthError('Password must be at least 6 characters');
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        showAuthError('Please enter a valid email address');
+        return;
+      }
+      
+      setLoading(registerBtn, true);
+      hideAuthError();
+      
+      try {
+        console.log("Attempting to register user:", email);
+        
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        console.log("User registered successfully:", userCredential.user);
+        
+        // 更新用户资料
+        await userCredential.user.updateProfile({
+          displayName: name
+        });
+        
+        console.log("User profile updated successfully");
+        
+        // 创建用户文档（可选，不是必需的）
+        try {
+          await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          console.log("User document created successfully");
+        } catch (dbError) {
+          console.warn("Could not create user document:", dbError);
+          // 继续执行，这不是关键错误
+        }
+        
+        // 注册成功，认证状态监听器会自动处理后续逻辑
+        
+      } catch (error) {
+        console.error("Registration error:", error);
+        
+        // 提供更友好的错误消息
+        let errorMessage = error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered. Please use a different email or login.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password is too weak. Please use a stronger password.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address. Please check your email.';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+        }
+        
+        showAuthError(errorMessage);
+        setLoading(registerBtn, false);
+      }
+    });
+
+    // 用户登录
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      // 验证输入
+      if (!email || !password) {
+        showAuthError('Please fill in all fields');
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        showAuthError('Please enter a valid email address');
+        return;
+      }
+      
+      setLoading(loginBtn, true);
+      hideAuthError();
+      
+      try {
+        console.log("Attempting to login user:", email);
+        
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        console.log("User logged in successfully:", userCredential.user);
+        
+        // 登录成功，认证状态监听器会自动处理后续逻辑
+        
+      } catch (error) {
+        console.error("Login error:", error);
+        
+        // 提供更友好的错误消息
+        let errorMessage = error.message;
+        if (error.code === 'auth/invalid-login-credentials') {
+          errorMessage = 'Invalid email or password. Please check your credentials.';
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = 'No account found with this email. Please register first.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMessage = 'Incorrect password. Please try again.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address. Please check your email.';
+        } else if (error.code === 'auth/user-disabled') {
+          errorMessage = 'This account has been disabled. Please contact support.';
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many failed login attempts. Please try again later.';
+        }
+        
+        showAuthError(errorMessage);
+        setLoading(loginBtn, false);
+      }
+    });
+
+    // 辅助函数：验证邮箱格式
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // 用户退出
+    function logout() {
+      auth.signOut();
+      // 切换回本地存储
+      loadLocalNotes();
+    }
+
+    // 加载云端笔记
+    function loadCloudNotes() {
+      if (!currentUser) return;
+      
+      console.log("Loading cloud notes for user:", currentUser.uid);
+      
+      try {
+        // 实时监听用户笔记
+        notesUnsubscribe = db.collection('notes')
+          .where('userId', '==', currentUser.uid)
+          .orderBy('createdAt', 'desc')
+          .onSnapshot((snapshot) => {
+            notes = [];
+            snapshot.forEach(doc => {
+              const note = doc.data();
+              note.id = doc.id;
+              // 转换Firestore时间戳为Date对象
+              if (note.createdAt && note.createdAt.toDate) {
+                note.createdAt = note.createdAt.toDate();
+              }
+              if (note.remindAt && note.remindAt.toDate) {
+                note.remindAt = note.remindAt.toDate();
+              }
+              notes.push(note);
+            });
+            
+            console.log("Loaded", notes.length, "notes from cloud");
+            setSyncStatus('synced');
+            renderNotes();
+            renderCompletedNotes();
+            renderReminders();
+            updateStats();
+          }, (error) => {
+            console.error('Error loading notes:', error);
+            setSyncStatus('error');
+          });
+      } catch (error) {
+        console.error('Error setting up notes listener:', error);
+        setSyncStatus('error');
+      }
+    }
+
+    // 创建笔记
+    async function createNote(title, content, remindAt) {
+      const noteData = {
+        title: title || (currentLang === 'cn' ? '(无标题)' : '(No Title)'),
+        content: content || '',
+        createdAt: new Date(),
+        remindAt: remindAt ? new Date(remindAt) : null,
+        done: false,
+        _notified: false
+      };
+      
+      if (isUsingCloud && currentUser) {
+        // 云端存储
+        noteData.userId = currentUser.uid;
+        noteData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        if (noteData.remindAt) {
+          noteData.remindAt = firebase.firestore.Timestamp.fromDate(new Date(remindAt));
+        }
+        
+        try {
+          await db.collection('notes').add(noteData);
+          console.log("Note created successfully in cloud");
+        } catch (error) {
+          console.error('Error creating note in cloud:', error);
+          alert('Failed to create note in cloud. Please check your connection.');
+        }
+      } else {
+        // 本地存储
+        const note = {
+          ...noteData,
+          id: Date.now().toString()
+        };
+        notes.unshift(note);
+        saveLocalNotes();
+        renderNotes();
+        renderCompletedNotes();
+        renderReminders();
+        updateStats();
+      }
+    }
+
+    // 更新笔记
+    async function updateNote(id, title, content) {
+      if (isUsingCloud && currentUser) {
+        try {
+          await db.collection('notes').doc(id).update({
+            title: title,
+            content: content
+          });
+        } catch (error) {
+          console.error('Error updating note:', error);
+          alert('Failed to update note');
+        }
+      } else {
+        const note = notes.find(n => n.id === id);
+        if (note) {
+          note.title = title;
+          note.content = content;
+          saveLocalNotes();
+          renderNotes();
+          renderCompletedNotes();
+        }
+      }
+    }
+
+    // 删除笔记
+    async function deleteNote(id) {
+      if (isUsingCloud && currentUser) {
+        try {
+          await db.collection('notes').doc(id).delete();
+        } catch (error) {
+          console.error('Error deleting note:', error);
+          alert('Failed to delete note');
+        }
+      } else {
+        notes = notes.filter(x => x.id !== id);
+        saveLocalNotes();
+        renderNotes();
+        renderCompletedNotes();
+        renderReminders();
+        updateStats();
+      }
+    }
+
+    // 设置提醒
+    async function setReminder(id, remindAt) {
+      const reminderDate = remindAt ? new Date(remindAt) : null;
+      
+      if (isUsingCloud && currentUser) {
+        try {
+          await db.collection('notes').doc(id).update({
+            remindAt: reminderDate ? firebase.firestore.Timestamp.fromDate(reminderDate) : null,
+            _notified: false
+          });
+        } catch (error) {
+          console.error('Error setting reminder:', error);
+          alert('Failed to set reminder');
+        }
+      } else {
+        const note = notes.find(x => x.id === id);
+        if (note) {
+          note.remindAt = reminderDate;
+          note._notified = false;
+          saveLocalNotes();
+          renderNotes();
+          renderCompletedNotes();
+          renderReminders();
+        }
+      }
+      
+      // 如果设置了提醒但通知权限未设置，请求权限
+      if (remindAt && Notification.permission === 'default') {
+        requestNotificationPermission();
+      }
+    }
+
+    // 删除提醒
+    async function deleteReminder(id) {
+      if (isUsingCloud && currentUser) {
+        try {
+          await db.collection('notes').doc(id).update({
+            remindAt: null
+          });
+        } catch (error) {
+          console.error('Error deleting reminder:', error);
+          alert('Failed to delete reminder');
+        }
+      } else {
+        const note = notes.find(x => x.id === id);
+        if (note) {
+          note.remindAt = null;
+          saveLocalNotes();
+          renderNotes();
+          renderCompletedNotes();
+          renderReminders();
+        }
+      }
+    }
+
+    // 切换完成状态
+    async function toggleDone(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+      
+      if (isUsingCloud && currentUser) {
+        try {
+          await db.collection('notes').doc(id).update({
+            done: !note.done
+          });
+        } catch (error) {
+          console.error('Error toggling note status:', error);
+          alert('Failed to update note');
+        }
+      } else {
+        note.done = !note.done;
+        saveLocalNotes();
+        renderNotes();
+        renderCompletedNotes();
+        renderReminders();
+        updateStats();
+      }
+    }
+
+    // 导出数据
+    function exportAllNotes() {
+      const data = JSON.stringify(notes, null, 2);
+      const blob = new Blob([data], {
+        type: 'application/json'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'notes_backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 导入数据
+    function importNotes(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedNotes = JSON.parse(e.target.result);
+          if (Array.isArray(importedNotes)) {
+            notes = importedNotes;
+            if (isUsingCloud && currentUser) {
+              // 如果是云端用户，将数据同步到云端
+              syncLocalToCloud();
+            } else {
+              // 本地存储
+              saveLocalNotes();
+              renderNotes();
+              renderCompletedNotes();
+              renderReminders();
+              updateStats();
+            }
+            const pack = currentLang === 'cn' ? UI.cn : UI.en;
+            alert(pack.importSuccess);
+          } else {
+            throw new Error('Invalid format');
+          }
+        } catch (error) {
+          const pack = currentLang === 'cn' ? UI.cn : UI.en;
+          alert(pack.importError);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // 将本地数据同步到云端
+    async function syncLocalToCloud() {
+      if (!currentUser) return;
+      
+      setSyncStatus('syncing');
+      
+      try {
+        // 批量上传本地笔记到云端
+        const batch = db.batch();
+        const localNotes = JSON.parse(localStorage.getItem('simple_notes_local') || '[]');
+        
+        for (const note of localNotes) {
+          const noteRef = db.collection('notes').doc();
+          const cloudNote = {
+            userId: currentUser.uid,
+            title: note.title,
+            content: note.content,
+            createdAt: firebase.firestore.Timestamp.fromDate(new Date(note.createdAt)),
+            remindAt: note.remindAt ? firebase.firestore.Timestamp.fromDate(new Date(note.remindAt)) : null,
+            done: note.done || false,
+            _notified: note._notified || false
+          };
+          batch.set(noteRef, cloudNote);
+        }
+        
+        await batch.commit();
+        setSyncStatus('synced');
+        
+        // 清空本地存储
+        localStorage.removeItem('simple_notes_local');
+        
+      } catch (error) {
+        console.error('Error syncing to cloud:', error);
+        setSyncStatus('error');
+      }
+    }
 
     // 请求通知权限
     function requestNotificationPermission() {
@@ -1034,216 +1810,55 @@
       }
     }
 
-    function applyLang() {
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      
-      // 更新所有带 data-t 属性的元素
-      document.querySelectorAll('[data-t]').forEach(el => {
-        const key = el.getAttribute('data-t');
-        if (pack[key]) {
-          el.textContent = pack[key];
-        }
-      });
-      
-      // 更新按钮文本
-      document.getElementById('newNote').textContent = pack.newNote;
-      document.getElementById('export').textContent = pack.export;
-      document.getElementById('import').textContent = pack.import;
-      document.getElementById('base64Data').textContent = pack.base64Data;
-      document.getElementById('save').textContent = pack.save;
-      document.getElementById('clear').textContent = pack.clear;
-      
-      // 更新占位符
-      document.getElementById('title').placeholder = pack.titlePlaceholder;
-      document.getElementById('content').placeholder = pack.contentPlaceholder;
-      q.placeholder = pack.searchPlaceholder;
-      
-      // 更新模态框标题
-      reminderModalTitle.textContent = pack.reminderModalTitle;
-      editModalTitle.textContent = pack.editModalTitle;
-      base64ModalTitle.textContent = pack.base64Data;
-      
-      // 更新语言按钮
-      langBtn.textContent = currentLang === 'cn' ? 'EN' : '中文';
-      
-      // 更新统计标签
-      document.querySelectorAll('.stat-label').forEach((el, index) => {
-        if (index === 0) el.textContent = pack.totalNotes;
-        if (index === 1) el.textContent = pack.activeReminders;
-        if (index === 2) el.textContent = pack.completedNotes;
-      });
-      
-      // 更新Base64模态框文本
-      exportModeBtn.textContent = pack.exportMode;
-      importModeBtn.textContent = pack.importMode;
-      copyExport.textContent = pack.copyExport;
-      refreshExport.textContent = pack.refreshExport;
-      pasteImport.textContent = pack.pasteImport;
-      importFromBase64.textContent = pack.importFromBase64;
-      closeBase64.textContent = pack.closeBase64;
-    }
-
-    function applyTheme() {
-      document.documentElement.setAttribute('data-theme', theme);
-      app.setAttribute('data-theme', theme);
-      themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-    }
-
-    function updateClock() {
+    // 检查提醒
+    function checkReminders() {
       const now = new Date();
-      datetimeEl.textContent = now.toLocaleString();
-      lunarEl.textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    function getLunarDay(d) {
-      if (currentLang === 'en') {
-        // 英文模式下显示星期几
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return days[d.getDay()];
-      }
+      let hasActiveReminders = false;
       
-      try {
-        const f = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
-          day: 'numeric',
-          month: 'numeric'
-        });
-        const parts = f.formatToParts(d);
-        const dayPart = parts.find(p => p.type === 'day')?.value;
-        if (dayPart) return '初' + dayPart;
-      } catch (e) {}
-      const day = d.getDate();
-      const map = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
-      return map[(day - 1) % 30] || '初?';
-    }
-
-    function updateStats() {
-      const total = notes.length;
-      const active = notes.filter(n => n.remindAt && !n.done).length;
-      const completed = notes.filter(n => n.done).length;
-      
-      totalNotesEl.textContent = total;
-      activeRemindersEl.textContent = active;
-      completedNotesEl.textContent = completed;
-    }
-
-    function saveNotes() {
-      localStorage.setItem('notes_v1', JSON.stringify(notes));
-      renderNotes();
-      renderCompletedNotes();
-      renderReminders();
-      updateStats();
-    }
-
-    function createNote(t, c, remindAt) {
-      const n = {
-        id: Date.now(),
-        title: t || (currentLang === 'cn' ? '(无标题)' : '(No Title)'),
-        content: c || '',
-        createdAt: new Date().toISOString(),
-        remindAt: remindAt || null,
-        done: false,
-        _notified: false
-      };
-      notes.unshift(n);
-      saveNotes();
-      return n;
-    }
-
-    function updateNote(id, title, content) {
-      const note = notes.find(n => n.id === id);
-      if (note) {
-        note.title = title;
-        note.content = content;
-        saveNotes();
-      }
-    }
-
-    function deleteNote(id) {
-      notes = notes.filter(x => x.id !== id);
-      saveNotes();
-    }
-
-    function deleteReminder(id) {
-      const note = notes.find(x => x.id === id);
-      if (note) {
-        note.remindAt = null;
-        saveNotes();
-      }
-    }
-
-    function setReminder(id, remindAt) {
-      const note = notes.find(x => x.id === id);
-      if (note) {
-        note.remindAt = remindAt;
-        note._notified = false;
-        saveNotes();
-        
-        // 如果设置了提醒但通知权限未设置，请求权限
-        if (remindAt && Notification.permission === 'default') {
-          requestNotificationPermission();
+      for (const note of notes) {
+        if (note.remindAt && !note.done && !note._notified) {
+          const remindTime = note.remindAt instanceof Date ? note.remindAt : new Date(note.remindAt);
+          if (remindTime <= now) {
+            notify(note);
+            // 标记为已通知
+            if (isUsingCloud && currentUser) {
+              db.collection('notes').doc(note.id).update({
+                _notified: true
+              });
+            } else {
+              note._notified = true;
+              saveLocalNotes();
+            }
+            hasActiveReminders = true;
+          }
         }
       }
+      
+      renderReminders();
     }
-
-    function toggleDone(id) {
-      const it = notes.find(x => x.id === id);
-      if (it) it.done = !it.done;
-      saveNotes();
-    }
-
-    function openReminderModal(noteId) {
-      currentNoteId = noteId;
-      const note = notes.find(n => n.id === noteId);
+    
+    setInterval(checkReminders, 30000);
+    
+    // 通知函数
+    function notify(note) {
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      const text = (currentLang === 'cn') ? `提醒: ${note.title}` : `Reminder: ${note.title}`;
       
-      if (note && note.remindAt) {
-        reminderModalTitle.textContent = pack.editReminder;
-        reminderDateTime.value = formatDateTimeLocal(new Date(note.remindAt));
+      if (window.Notification && Notification.permission === 'granted') {
+        new Notification(text, {
+          body: note.content.substring(0, 120),
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📝</text></svg>',
+          tag: `note-${note.id}`
+        });
       } else {
-        reminderModalTitle.textContent = pack.setReminder;
-        // 设置默认时间为当前时间+1小时
-        const defaultTime = new Date(Date.now() + 60 * 60 * 1000);
-        reminderDateTime.value = formatDateTimeLocal(defaultTime);
-      }
-      
-      reminderModal.style.display = 'flex';
-    }
-
-    function openEditModal(noteId) {
-      currentNoteId = noteId;
-      const note = notes.find(n => n.id === noteId);
-      
-      if (note) {
-        editTitle.value = note.title;
-        editContent.value = note.content;
-        editModal.style.display = 'flex';
+        // 如果通知权限被拒绝，使用alert作为备用
+        alert(text + '\n' + note.content);
       }
     }
 
-    function closeReminderModalFunc() {
-      reminderModal.style.display = 'none';
-      currentNoteId = null;
-    }
-
-    function closeEditModalFunc() {
-      editModal.style.display = 'none';
-      currentNoteId = null;
-    }
-
-    function formatDateTimeLocal(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      
-      return `${year}-${month}-${day}T${hours}:${minutes}`;
-    }
-
+    // 渲染函数
     function renderNotes(filter = '') {
-      notesEl.innerHTML = '';
+      const notesEl = document.getElementById('notes');
       const activeNotes = notes.filter(n => !n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
 
       if (activeNotes.length === 0) {
@@ -1259,26 +1874,28 @@
         return;
       }
 
+      notesEl.innerHTML = '';
       for (const n of activeNotes) {
         const el = document.createElement('div');
         el.className = `note`;
         
         const pack = currentLang === 'cn' ? UI.cn : UI.en;
+        const createdDate = n.createdAt instanceof Date ? n.createdAt : new Date(n.createdAt);
         const remindDisplay = n.remindAt ? 
-          `<span class='reminderTime'>${pack.reminder}: ${(new Date(n.remindAt)).toLocaleString()}</span>` : 
+          `<span class='reminderTime'>${pack.reminder}: ${(n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)).toLocaleString()}</span>` : 
           pack.noReminder;
           
         el.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:start">
             <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
-              <div class="pill">${new Date(n.createdAt).toLocaleString()}</div>
+              <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
           </div>
           <div style="margin-top:10px;color:var(--text-secondary);font-size:14px">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center" class="meta">
             <div class="pill">${remindDisplay}</div>
-            <div class="pill">ID:${n.id}</div>
+            <div class="pill">ID:${n.id.substring(0, 8)}</div>
             <div style="flex:1"></div>
             <button class="btn btn-warning" data-action="set-reminder" data-id="${n.id}">${pack.setReminder}</button>
             <button class="btn btn-success" data-action="edit" data-id="${n.id}">${pack.edit}</button>
@@ -1291,6 +1908,8 @@
     }
 
     function renderCompletedNotes(filter = '') {
+      const completedSection = document.getElementById('completedSection');
+      const completedNotesList = document.getElementById('completedNotesList');
       const completedNotes = notes.filter(n => n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
       
       if (completedNotes.length === 0) {
@@ -1310,21 +1929,22 @@
         const el = document.createElement('div');
         el.className = `completed-note`;
         
+        const createdDate = n.createdAt instanceof Date ? n.createdAt : new Date(n.createdAt);
         const remindDisplay = n.remindAt ? 
-          `<span class='reminderTime'>${pack.reminder}: ${(new Date(n.remindAt)).toLocaleString()}</span>` : 
+          `<span class='reminderTime'>${pack.reminder}: ${(n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)).toLocaleString()}</span>` : 
           pack.noReminder;
           
         el.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:start">
             <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
-              <div class="pill">${new Date(n.createdAt).toLocaleString()}</div>
+              <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
           </div>
           <div style="margin-top:10px;color:var(--text-secondary);font-size:14px">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center" class="meta">
             <div class="pill">${remindDisplay}</div>
-            <div class="pill">ID:${n.id}</div>
+            <div class="pill">ID:${n.id.substring(0, 8)}</div>
             <div style="flex:1"></div>
             <button class="btn btn-success" data-action="undo-done" data-id="${n.id}">${pack.undoComplete}</button>
             <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
@@ -1335,11 +1955,15 @@
     }
 
     function renderReminders() {
-      remindersEl.innerHTML = '';
+      const remindersEl = document.getElementById('reminders');
       const now = new Date();
       const upcoming = notes
         .filter(n => n.remindAt && !n.done)
-        .sort((a, b) => new Date(a.remindAt) - new Date(b.remindAt));
+        .sort((a, b) => {
+          const aTime = a.remindAt instanceof Date ? a.remindAt : new Date(a.remindAt);
+          const bTime = b.remindAt instanceof Date ? b.remindAt : new Date(b.remindAt);
+          return aTime - bTime;
+        });
         
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
@@ -1348,9 +1972,10 @@
         return;
       }
       
+      remindersEl.innerHTML = '';
       for (const n of upcoming) {
         const el = document.createElement('div');
-        const when = new Date(n.remindAt);
+        const when = n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt);
         const isAlert = when <= now;
         
         el.className = `reminder-item ${isAlert ? 'alert' : ''}`;
@@ -1368,45 +1993,14 @@
       }
     }
 
-    function checkReminders() {
-      const now = new Date();
-      let hasActiveReminders = false;
+    function updateStats() {
+      const total = notes.length;
+      const active = notes.filter(n => n.remindAt && !n.done).length;
+      const completed = notes.filter(n => n.done).length;
       
-      for (const n of notes) {
-        if (n.remindAt && !n.done && !n._notified) {
-          const t = new Date(n.remindAt);
-          if (t <= now) {
-            notify(n);
-            n._notified = true;
-            hasActiveReminders = true;
-          }
-        }
-      }
-      
-      if (hasActiveReminders) {
-        saveNotes();
-      }
-      
-      renderReminders();
-    }
-    
-    setInterval(checkReminders, 30000);
-    checkReminders();
-
-    function notify(n) {
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      const text = (currentLang === 'cn') ? `提醒: ${n.title}` : `Reminder: ${n.title}`;
-      
-      if (window.Notification && Notification.permission === 'granted') {
-        new Notification(text, {
-          body: n.content.substring(0, 120),
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📝</text></svg>',
-          tag: `note-${n.id}`
-        });
-      } else {
-        // 如果通知权限被拒绝，使用alert作为备用
-        alert(text + '\n' + n.content);
-      }
+      document.getElementById('totalNotes').textContent = total;
+      document.getElementById('activeReminders').textContent = active;
+      document.getElementById('completedNotes').textContent = completed;
     }
 
     function escapeHtml(s) {
@@ -1419,134 +2013,71 @@
       }[c]));
     }
 
-    function exportAllNotes() {
-      const data = JSON.stringify(notes, null, 2);
-      const blob = new Blob([data], {
-        type: 'application/json'
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'notes_backup.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importNotes(file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const importedNotes = JSON.parse(e.target.result);
-          if (Array.isArray(importedNotes)) {
-            notes = importedNotes;
-            saveNotes();
-            const pack = currentLang === 'cn' ? UI.cn : UI.en;
-            alert(pack.importSuccess);
-          } else {
-            throw new Error('Invalid format');
-          }
-        } catch (error) {
-          const pack = currentLang === 'cn' ? UI.cn : UI.en;
-          alert(pack.importError);
+    // 语言和主题功能
+    function applyLang() {
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      
+      // 更新所有带 data-t 属性的元素
+      document.querySelectorAll('[data-t]').forEach(el => {
+        const key = el.getAttribute('data-t');
+        if (pack[key]) {
+          el.textContent = pack[key];
         }
-      };
-      reader.readAsText(file);
-    }
-
-    // Base64 功能
-    function openBase64Modal() {
-      base64Modal.style.display = 'flex';
-      // 默认显示导出模式，并自动生成数据
-      switchBase64Mode('export');
-      generateBase64Export(); // 自动生成导出数据
-    }
-
-    function switchBase64Mode(mode) {
-      currentBase64Mode = mode;
-      
-      // 更新按钮状态
-      exportModeBtn.classList.toggle('active', mode === 'export');
-      importModeBtn.classList.toggle('active', mode === 'import');
-      
-      // 更新内容区域
-      exportSection.classList.toggle('active', mode === 'export');
-      importSection.classList.toggle('active', mode === 'import');
-      
-      // 如果是导出模式，自动生成数据
-      if (mode === 'export') {
-        generateBase64Export();
-      } else {
-        // 清空导入区域
-        base64ImportData.value = '';
-      }
-    }
-
-    function generateBase64Export() {
-      const data = JSON.stringify(notes);
-      const base64 = btoa(unescape(encodeURIComponent(data)));
-      base64ExportData.value = base64;
-      
-      // 自动选中文本以便用户复制
-      base64ExportData.select();
-    }
-
-    function copyBase64ToClipboard() {
-      base64ExportData.select();
-      document.execCommand('copy');
-      
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      alert(pack.copySuccess);
-    }
-
-    function refreshBase64Export() {
-      generateBase64Export();
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      alert(pack.base64ExportSuccess);
-    }
-
-    function pasteFromClipboard() {
-      navigator.clipboard.readText().then(text => {
-        base64ImportData.value = text;
-        const pack = currentLang === 'cn' ? UI.cn : UI.en;
-        alert(pack.pasteSuccess);
-      }).catch(err => {
-        const pack = currentLang === 'cn' ? UI.cn : UI.en;
-        alert(pack.pasteError);
       });
+      
+      // 更新按钮文本
+      document.getElementById('newNote').textContent = pack.newNote;
+      document.getElementById('save').textContent = pack.save;
+      document.getElementById('clear').textContent = pack.clear;
+      document.getElementById('syncNow').textContent = pack.syncNow;
+      
+      // 更新占位符
+      document.getElementById('title').placeholder = pack.titlePlaceholder;
+      document.getElementById('content').placeholder = pack.contentPlaceholder;
+      document.getElementById('q').placeholder = pack.searchPlaceholder;
+      
+      // 更新同步状态
+      setSyncStatus(isUsingCloud ? 'synced' : 'local');
     }
 
-    function importFromBase64Data() {
+    function applyTheme() {
+      document.documentElement.setAttribute('data-theme', theme);
+      app.setAttribute('data-theme', theme);
+      document.getElementById('theme').textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('datetime').textContent = now.toLocaleString();
+      document.getElementById('lunar').textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
+    }
+
+    function getLunarDay(d) {
+      if (currentLang === 'en') {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[d.getDay()];
+      }
+      
       try {
-        const base64 = base64ImportData.value.trim();
-        if (!base64) return;
-        
-        const jsonString = decodeURIComponent(escape(atob(base64)));
-        const importedNotes = JSON.parse(jsonString);
-        
-        if (Array.isArray(importedNotes)) {
-          notes = importedNotes;
-          saveNotes();
-          base64Modal.style.display = 'none';
-          const pack = currentLang === 'cn' ? UI.cn : UI.en;
-          alert(pack.base64ImportSuccess);
-        } else {
-          throw new Error('Invalid format');
-        }
-      } catch (error) {
-        const pack = currentLang === 'cn' ? UI.cn : UI.en;
-        alert(pack.base64ImportError);
-      }
+        const f = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
+          day: 'numeric',
+          month: 'numeric'
+        });
+        const parts = f.formatToParts(d);
+        const dayPart = parts.find(p => p.type === 'day')?.value;
+        if (dayPart) return '初' + dayPart;
+      } catch (e) {}
+      const day = d.getDate();
+      const map = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+      return map[(day - 1) % 30] || '初?';
     }
 
-    // Event Listeners
+    // 事件监听器
     document.getElementById('save').addEventListener('click', () => {
       const t = document.getElementById('title').value.trim();
       const c = document.getElementById('content').value.trim();
       const r = document.getElementById('remindAt').value || null;
       createNote(t, c, r);
-      if (r && Notification && Notification.permission !== 'granted') {
-        requestNotificationPermission();
-      }
       document.getElementById('title').value = '';
       document.getElementById('content').value = '';
       document.getElementById('remindAt').value = '';
@@ -1554,72 +2085,97 @@
 
     document.getElementById('newNote').addEventListener('click', () => document.getElementById('title').focus());
 
-    document.getElementById('export').addEventListener('click', exportAllNotes);
-
-    document.getElementById('import').addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', (e) => {
+    document.getElementById('fileInput').addEventListener('change', (e) => {
       if (e.target.files.length > 0) {
         importNotes(e.target.files[0]);
         e.target.value = ''; // Reset file input
       }
     });
 
-    // Base64 数据按钮事件
-    document.getElementById('base64Data').addEventListener('click', openBase64Modal);
+    skipAuth.addEventListener('click', () => {
+      hideAuthModal();
+      loadLocalNotes();
+    });
 
-    // Base64 模态框事件
-    exportModeBtn.addEventListener('click', () => switchBase64Mode('export'));
-    importModeBtn.addEventListener('click', () => switchBase64Mode('import'));
-    copyExport.addEventListener('click', copyBase64ToClipboard);
-    refreshExport.addEventListener('click', refreshBase64Export);
-    pasteImport.addEventListener('click', pasteFromClipboard);
-    importFromBase64.addEventListener('click', importFromBase64Data);
-    closeBase64Modal.addEventListener('click', () => base64Modal.style.display = 'none');
-    closeBase64.addEventListener('click', () => base64Modal.style.display = 'none');
+    syncNow.addEventListener('click', () => {
+      if (currentUser && isUsingCloud) {
+        loadCloudNotes();
+      }
+    });
 
-    notesEl.addEventListener('click', e => {
+    userAvatar.addEventListener('click', () => {
+      userDropdown.classList.toggle('active');
+    });
+
+    // 关闭下拉菜单当点击外部
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.user-menu')) {
+        userDropdown.classList.remove('active');
+      }
+    });
+
+    // 切换登录/注册标签
+    document.getElementById('loginTab').addEventListener('click', () => {
+      document.getElementById('loginTab').classList.add('active');
+      document.getElementById('registerTab').classList.remove('active');
+      document.getElementById('loginForm').classList.add('active');
+      document.getElementById('registerForm').classList.remove('active');
+      hideAuthError();
+    });
+
+    document.getElementById('registerTab').addEventListener('click', () => {
+      document.getElementById('registerTab').classList.add('active');
+      document.getElementById('loginTab').classList.remove('active');
+      document.getElementById('registerForm').classList.add('active');
+      document.getElementById('loginForm').classList.remove('active');
+      hideAuthError();
+    });
+
+    // 笔记操作事件
+    document.getElementById('notes').addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
-      const id = Number(btn.dataset.id);
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
-      if (btn.dataset.action === 'delete') {
+      if (action === 'delete') {
         if (confirm(pack.deleteConfirm)) {
           deleteNote(id);
         }
       }
-      if (btn.dataset.action === 'done') {
+      if (action === 'done') {
         toggleDone(id);
       }
-      if (btn.dataset.action === 'set-reminder') {
+      if (action === 'set-reminder') {
         openReminderModal(id);
       }
-      if (btn.dataset.action === 'edit') {
+      if (action === 'edit') {
         openEditModal(id);
       }
     });
 
-    completedNotesList.addEventListener('click', e => {
+    document.getElementById('completedNotesList').addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
-      const id = Number(btn.dataset.id);
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
-      if (btn.dataset.action === 'delete') {
+      if (action === 'delete') {
         if (confirm(pack.deleteConfirm)) {
           deleteNote(id);
         }
       }
-      if (btn.dataset.action === 'undo-done') {
+      if (action === 'undo-done') {
         toggleDone(id);
       }
     });
 
-    remindersEl.addEventListener('click', e => {
+    document.getElementById('reminders').addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
-      const id = Number(btn.dataset.id);
+      const id = btn.dataset.id;
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
       if (btn.dataset.action === 'delete-reminder') {
@@ -1629,75 +2185,131 @@
       }
     });
 
-    // 提醒模态框事件
-    closeReminderModal.addEventListener('click', closeReminderModalFunc);
-    cancelReminder.addEventListener('click', closeReminderModalFunc);
-    
-    saveReminder.addEventListener('click', () => {
-      if (currentNoteId && reminderDateTime.value) {
-        setReminder(currentNoteId, reminderDateTime.value);
-        closeReminderModalFunc();
-      }
-    });
-
-    // 编辑模态框事件
-    closeEditModal.addEventListener('click', closeEditModalFunc);
-    cancelEdit.addEventListener('click', closeEditModalFunc);
-    
-    saveEdit.addEventListener('click', () => {
-      if (currentNoteId && editTitle.value.trim()) {
-        updateNote(currentNoteId, editTitle.value.trim(), editContent.value.trim());
-        closeEditModalFunc();
-      }
-    });
-
-    // 点击模态框外部关闭
-    window.addEventListener('click', (e) => {
-      if (e.target === reminderModal) {
-        closeReminderModalFunc();
-      }
-      if (e.target === editModal) {
-        closeEditModalFunc();
-      }
-      if (e.target === base64Modal) {
-        base64Modal.style.display = 'none';
-      }
-    });
-
-    q.addEventListener('input', () => {
-      renderNotes(q.value);
-      renderCompletedNotes(q.value);
+    // 搜索功能
+    document.getElementById('q').addEventListener('input', () => {
+      renderNotes(document.getElementById('q').value);
+      renderCompletedNotes(document.getElementById('q').value);
     });
     
     document.getElementById('clear').addEventListener('click', () => {
-      q.value = '';
+      document.getElementById('q').value = '';
       renderNotes();
       renderCompletedNotes();
     });
 
-    langBtn.addEventListener('click', () => {
+    // 语言切换
+    document.getElementById('lang').addEventListener('click', () => {
       currentLang = currentLang === 'cn' ? 'en' : 'cn';
       app.setAttribute('data-lang', currentLang);
       applyLang();
-      renderNotes(q.value);
-      renderCompletedNotes(q.value);
+      renderNotes(document.getElementById('q').value);
+      renderCompletedNotes(document.getElementById('q').value);
       renderReminders();
     });
 
-    themeBtn.addEventListener('click', () => {
+    // 主题切换
+    document.getElementById('theme').addEventListener('click', () => {
       theme = theme === 'dark' ? 'light' : 'dark';
       app.setAttribute('data-theme', theme);
       applyTheme();
     });
 
-    // Initialize
-    applyLang();
-    applyTheme();
-    renderNotes();
-    renderCompletedNotes();
-    renderReminders();
-    updateStats();
-    setTimeout(checkReminders, 2000);
+    // 初始化应用
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM loaded, initializing app...");
+      
+      loadLocalNotes(); // 默认加载本地数据
+      applyLang();
+      applyTheme();
+      setInterval(updateClock, 1000);
+      updateClock();
+      setTimeout(checkReminders, 2000);
+      updateUserUI();
+    });
+
+    // 模态框功能
+    let currentNoteId = null;
+    
+    function openReminderModal(noteId) {
+      currentNoteId = noteId;
+      const note = notes.find(n => n.id === noteId);
+      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+      
+      if (note && note.remindAt) {
+        document.getElementById('reminderModalTitle').textContent = pack.editReminder;
+        const remindDate = note.remindAt instanceof Date ? note.remindAt : new Date(note.remindAt);
+        document.getElementById('reminderDateTime').value = formatDateTimeLocal(remindDate);
+      } else {
+        document.getElementById('reminderModalTitle').textContent = pack.setReminder;
+        // 设置默认时间为当前时间+1小时
+        const defaultTime = new Date(Date.now() + 60 * 60 * 1000);
+        document.getElementById('reminderDateTime').value = formatDateTimeLocal(defaultTime);
+      }
+      
+      document.getElementById('reminderModal').style.display = 'flex';
+    }
+
+    function openEditModal(noteId) {
+      currentNoteId = noteId;
+      const note = notes.find(n => n.id === noteId);
+      
+      if (note) {
+        document.getElementById('editTitle').value = note.title;
+        document.getElementById('editContent').value = note.content;
+        document.getElementById('editModal').style.display = 'flex';
+      }
+    }
+
+    function formatDateTimeLocal(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // 模态框关闭事件
+    document.getElementById('closeReminderModal').addEventListener('click', () => {
+      document.getElementById('reminderModal').style.display = 'none';
+    });
+
+    document.getElementById('cancelReminder').addEventListener('click', () => {
+      document.getElementById('reminderModal').style.display = 'none';
+    });
+
+    document.getElementById('saveReminder').addEventListener('click', () => {
+      if (currentNoteId && document.getElementById('reminderDateTime').value) {
+        setReminder(currentNoteId, document.getElementById('reminderDateTime').value);
+        document.getElementById('reminderModal').style.display = 'none';
+      }
+    });
+
+    document.getElementById('closeEditModal').addEventListener('click', () => {
+      document.getElementById('editModal').style.display = 'none';
+    });
+
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+      document.getElementById('editModal').style.display = 'none';
+    });
+
+    document.getElementById('saveEdit').addEventListener('click', () => {
+      if (currentNoteId && document.getElementById('editTitle').value.trim()) {
+        updateNote(currentNoteId, document.getElementById('editTitle').value.trim(), document.getElementById('editContent').value.trim());
+        document.getElementById('editModal').style.display = 'none';
+      }
+    });
+
+    // 点击模态框外部关闭
+    window.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('reminderModal')) {
+        document.getElementById('reminderModal').style.display = 'none';
+      }
+      if (e.target === document.getElementById('editModal')) {
+        document.getElementById('editModal').style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
