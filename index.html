@@ -67,6 +67,9 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      /* 防止移动端缩放 */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .app {
@@ -137,6 +140,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      /* 移动端优化 */
+      min-height: 44px;
+      min-width: 44px;
     }
     
     .btn:hover {
@@ -273,6 +279,8 @@
       font-weight: var(--font-weight-normal);
       transition: all 0.3s ease;
       font-size: 15px;
+      /* 移动端优化 */
+      font-size: 16px; /* 防止iOS缩放 */
     }
     
     .noteEditor input:focus,
@@ -378,7 +386,7 @@
       padding: 16px;
     }
     
-    /* 响应式布局优化 */
+    /* 移动端优化 - 响应式布局 */
     @media (max-width: 900px) {
       main {
         grid-template-columns: 1fr;
@@ -445,6 +453,27 @@
       .timecard {
         width: 100%;
       }
+      
+      /* 移动端优化 - 增加字体大小 */
+      body {
+        font-size: 16px;
+      }
+      
+      .noteEditor input,
+      .noteEditor textarea {
+        font-size: 16px; /* 防止iOS缩放 */
+      }
+      
+      /* 移动端优化 - 按钮间距 */
+      .note .meta {
+        flex-wrap: wrap;
+      }
+      
+      .note .meta .btn {
+        flex: 1;
+        min-width: 80px;
+        justify-content: center;
+      }
     }
     
     /* 在非常小的屏幕上进一步优化 */
@@ -474,8 +503,52 @@
       .note .meta .pill {
         margin-bottom: 4px;
       }
+      
+      /* 移动端优化 - 底部操作栏 */
+      .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-around;
+        padding: 8px 0;
+        z-index: 100;
+      }
+      
+      .mobile-bottom-nav .btn {
+        flex-direction: column;
+        font-size: 12px;
+        padding: 8px;
+        gap: 4px;
+      }
+      
+      /* 为移动端底部导航添加空间 */
+      body {
+        padding-bottom: 70px;
+      }
+      
+      .app {
+        margin-bottom: 70px;
+      }
     }
     
+    /* 移动端优化 - 隐藏桌面元素 */
+    @media (max-width: 768px) {
+      .desktop-only {
+        display: none !important;
+      }
+    }
+    
+    /* 移动端优化 - 显示移动元素 */
+    @media (min-width: 769px) {
+      .mobile-only {
+        display: none !important;
+      }
+    }
+
     .note,
     .timecard,
     .noteEditor {
@@ -585,6 +658,8 @@
       z-index: 1000;
       align-items: center;
       justify-content: center;
+      /* 移动端优化 */
+      padding: 16px;
     }
     
     .modal-content {
@@ -595,6 +670,9 @@
       width: 90%;
       max-width: 500px;
       border: 1px solid var(--border);
+      /* 移动端优化 */
+      max-height: 90vh;
+      overflow-y: auto;
     }
     
     .modal-header {
@@ -616,6 +694,12 @@
       font-size: 24px;
       cursor: pointer;
       color: var(--muted);
+      /* 移动端优化 */
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .form-group {
@@ -637,6 +721,8 @@
       background: transparent;
       color: var(--text);
       font-size: 15px;
+      /* 移动端优化 */
+      font-size: 16px; /* 防止iOS缩放 */
     }
     
     .form-control:focus {
@@ -657,6 +743,8 @@
       z-index: 1000;
       align-items: center;
       justify-content: center;
+      /* 移动端优化 */
+      padding: 16px;
     }
     
     .auth-container {
@@ -667,6 +755,9 @@
       width: 90%;
       max-width: 400px;
       border: 1px solid var(--border);
+      /* 移动端优化 */
+      max-height: 90vh;
+      overflow-y: auto;
     }
     
     .auth-header {
@@ -719,6 +810,8 @@
       font-weight: var(--font-weight-medium);
       color: var(--muted);
       transition: all 0.3s ease;
+      /* 移动端优化 */
+      min-height: 44px;
     }
     
     .auth-tab.active {
@@ -768,6 +861,9 @@
       color: white;
       font-weight: var(--font-weight-bold);
       cursor: pointer;
+      /* 移动端优化 */
+      min-width: 44px;
+      min-height: 44px;
     }
     
     .user-dropdown {
@@ -798,6 +894,8 @@
       transition: all 0.3s ease;
       color: var(--text);
       text-decoration: none;
+      /* 移动端优化 */
+      min-height: 44px;
     }
     
     .user-dropdown-item:hover {
@@ -875,6 +973,47 @@
       position: absolute;
       top: 20px;
       right: 20px;
+    }
+    
+    /* 移动端优化 - 底部导航栏 */
+    .mobile-bottom-nav {
+      display: none;
+    }
+    
+    @media (max-width: 480px) {
+      .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        justify-content: space-around;
+        padding: 8px 0;
+        z-index: 100;
+        box-shadow: 0 -4px 12px var(--shadow);
+      }
+      
+      .mobile-bottom-nav .btn {
+        flex-direction: column;
+        font-size: 12px;
+        padding: 8px;
+        gap: 4px;
+        flex: 1;
+        max-width: 80px;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      /* 为移动端底部导航添加空间 */
+      body {
+        padding-bottom: 70px;
+      }
+      
+      .app {
+        margin-bottom: 70px;
+      }
     }
   </style>
 </head>
@@ -1048,6 +1187,26 @@
     <footer data-t="footer">Simple Notebook — Use locally or login for cloud sync · Beautiful UI · Supports English/Chinese</footer>
   </div>
 
+  <!-- 移动端底部导航 -->
+  <div class="mobile-bottom-nav mobile-only">
+    <button class="btn" id="mobileNewNote">
+      <span>📝</span>
+      <span>New</span>
+    </button>
+    <button class="btn" id="mobileSearch">
+      <span>🔍</span>
+      <span>Search</span>
+    </button>
+    <button class="btn" id="mobileReminders">
+      <span>⏰</span>
+      <span>Reminders</span>
+    </button>
+    <button class="btn" id="mobileMenu">
+      <span>☰</span>
+      <span>Menu</span>
+    </button>
+  </div>
+
   <!-- 设置提醒模态框 -->
   <div class="modal" id="reminderModal">
     <div class="modal-content">
@@ -1184,6 +1343,12 @@
       elements.totalNotes = document.getElementById('totalNotes');
       elements.activeReminders = document.getElementById('activeReminders');
       elements.completedNotes = document.getElementById('completedNotes');
+      
+      // 移动端元素
+      elements.mobileNewNote = document.getElementById('mobileNewNote');
+      elements.mobileSearch = document.getElementById('mobileSearch');
+      elements.mobileReminders = document.getElementById('mobileReminders');
+      elements.mobileMenu = document.getElementById('mobileMenu');
       
       // 验证必需元素
       const requiredElements = ['app', 'authModal', 'userAvatar', 'userDropdown', 'notes', 'datetime', 'lunar'];
@@ -2371,6 +2536,46 @@
       });
     }
 
+    // 设置移动端事件
+    function setupMobileEvents() {
+      // 移动端新建笔记
+      if (elements.mobileNewNote) {
+        elements.mobileNewNote.addEventListener('click', () => {
+          if (elements.title) {
+            elements.title.focus();
+            // 平滑滚动到编辑器
+            elements.editor.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      
+      // 移动端搜索
+      if (elements.mobileSearch) {
+        elements.mobileSearch.addEventListener('click', () => {
+          if (elements.q) {
+            elements.q.focus();
+          }
+        });
+      }
+      
+      // 移动端提醒
+      if (elements.mobileReminders) {
+        elements.mobileReminders.addEventListener('click', () => {
+          // 平滑滚动到提醒区域
+          document.querySelector('aside').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      // 移动端菜单
+      if (elements.mobileMenu) {
+        elements.mobileMenu.addEventListener('click', () => {
+          if (elements.userDropdown) {
+            elements.userDropdown.classList.toggle('active');
+          }
+        });
+      }
+    }
+
     // 模态框功能
     function openReminderModal(noteId) {
       currentNoteId = noteId;
@@ -2429,6 +2634,7 @@
         // 设置笔记相关事件
         setupNoteEvents();
         setupModalEvents();
+        setupMobileEvents();
         
         // 设置其他事件
         if (elements.save) {
