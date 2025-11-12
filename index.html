@@ -787,32 +787,6 @@
       top: 20px;
       right: 20px;
     }
-    
-    .storage-mode {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: var(--card);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    
-    .mode-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-    
-    .mode-indicator.cloud {
-      background: var(--success);
-    }
-    
-    .mode-indicator.local {
-      background: var(--info);
-    }
   </style>
 </head>
 <body>
@@ -1055,6 +1029,77 @@
     let currentLang = 'en';
     let theme = 'light';
     let isUsingCloud = false;
+    let currentNoteId = null;
+
+    // DOM元素管理器
+    const elements = {};
+
+    // 初始化所有DOM元素引用
+    function initializeElements() {
+      // 主应用元素
+      elements.app = document.getElementById('app');
+      elements.authModal = document.getElementById('authModal');
+      elements.authError = document.getElementById('authError');
+      elements.loginForm = document.getElementById('loginForm');
+      elements.registerForm = document.getElementById('registerForm');
+      elements.loginBtn = document.getElementById('loginBtn');
+      elements.registerBtn = document.getElementById('registerBtn');
+      elements.userAvatar = document.getElementById('userAvatar');
+      elements.userDropdown = document.getElementById('userDropdown');
+      elements.syncStatus = document.getElementById('syncStatus');
+      elements.syncIndicator = document.getElementById('syncIndicator');
+      elements.syncText = document.getElementById('syncText');
+      elements.storageInfo = document.getElementById('storageInfo');
+      elements.skipAuth = document.getElementById('skipAuth');
+      elements.syncNow = document.getElementById('syncNow');
+      elements.fileInput = document.getElementById('fileInput');
+      
+      // 笔记相关元素
+      elements.notes = document.getElementById('notes');
+      elements.completedSection = document.getElementById('completedSection');
+      elements.completedNotesList = document.getElementById('completedNotesList');
+      elements.reminders = document.getElementById('reminders');
+      
+      // 表单元素
+      elements.title = document.getElementById('title');
+      elements.content = document.getElementById('content');
+      elements.remindAt = document.getElementById('remindAt');
+      elements.save = document.getElementById('save');
+      elements.newNote = document.getElementById('newNote');
+      elements.q = document.getElementById('q');
+      elements.clear = document.getElementById('clear');
+      elements.lang = document.getElementById('lang');
+      elements.theme = document.getElementById('theme');
+      
+      // 模态框元素
+      elements.reminderModal = document.getElementById('reminderModal');
+      elements.reminderModalTitle = document.getElementById('reminderModalTitle');
+      elements.reminderDateTime = document.getElementById('reminderDateTime');
+      elements.closeReminderModal = document.getElementById('closeReminderModal');
+      elements.cancelReminder = document.getElementById('cancelReminder');
+      elements.saveReminder = document.getElementById('saveReminder');
+      
+      elements.editModal = document.getElementById('editModal');
+      elements.editModalTitle = document.getElementById('editModalTitle');
+      elements.editTitle = document.getElementById('editTitle');
+      elements.editContent = document.getElementById('editContent');
+      elements.closeEditModal = document.getElementById('closeEditModal');
+      elements.cancelEdit = document.getElementById('cancelEdit');
+      elements.saveEdit = document.getElementById('saveEdit');
+      
+      // 统计元素
+      elements.totalNotes = document.getElementById('totalNotes');
+      elements.activeReminders = document.getElementById('activeReminders');
+      elements.completedNotes = document.getElementById('completedNotes');
+      
+      // 验证必需元素
+      const requiredElements = ['app', 'authModal', 'userAvatar', 'userDropdown', 'notes'];
+      for (const key of requiredElements) {
+        if (!elements[key]) {
+          console.warn(`Required element not found: ${key}`);
+        }
+      }
+    }
 
     // UI文本
     const UI = {
@@ -1196,26 +1241,6 @@
       }
     };
 
-    // DOM元素
-    const app = document.getElementById('app');
-    const authModal = document.getElementById('authModal');
-    const authError = document.getElementById('authError');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const userAvatar = document.getElementById('userAvatar');
-    const userDropdown = document.getElementById('userDropdown');
-    const loginLink = document.getElementById('loginLink');
-    const exportLink = document.getElementById('exportLink');
-    const importLink = document.getElementById('importLink');
-    const syncStatus = document.getElementById('syncStatus');
-    const syncIndicator = document.getElementById('syncIndicator');
-    const syncText = document.getElementById('syncText');
-    const storageInfo = document.getElementById('storageInfo');
-    const skipAuth = document.getElementById('skipAuth');
-    const syncNow = document.getElementById('syncNow');
-
     // 本地存储函数
     function loadLocalNotes() {
       const localNotes = localStorage.getItem('simple_notes_local');
@@ -1236,72 +1261,80 @@
 
     // 认证相关函数
     function showAuthModal() {
-      authModal.style.display = 'flex';
+      if (elements.authModal) elements.authModal.style.display = 'flex';
     }
 
     function hideAuthModal() {
-      authModal.style.display = 'none';
+      if (elements.authModal) elements.authModal.style.display = 'none';
     }
 
     function showAuthError(message) {
-      authError.textContent = message;
-      authError.style.display = 'block';
+      if (elements.authError) {
+        elements.authError.textContent = message;
+        elements.authError.style.display = 'block';
+      }
     }
 
     function hideAuthError() {
-      authError.style.display = 'none';
+      if (elements.authError) elements.authError.style.display = 'none';
     }
 
     function setLoading(button, isLoading) {
+      if (!button) return;
+      
       const spinner = button.querySelector('.spinner');
       const text = button.querySelector('span');
       
       if (isLoading) {
-        spinner.style.display = 'block';
-        text.style.display = 'none';
+        if (spinner) spinner.style.display = 'block';
+        if (text) text.style.display = 'none';
         button.disabled = true;
       } else {
-        spinner.style.display = 'none';
-        text.style.display = 'inline';
+        if (spinner) spinner.style.display = 'none';
+        if (text) text.style.display = 'inline';
         button.disabled = false;
       }
     }
 
     function setSyncStatus(status) {
+      if (!elements.syncIndicator || !elements.syncText || !elements.storageInfo) return;
+      
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
-      syncIndicator.className = 'sync-indicator';
+      elements.syncIndicator.className = 'sync-indicator';
       if (status === 'synced') {
-        syncIndicator.classList.add('synced');
-        syncText.textContent = pack.synced;
-        storageInfo.textContent = pack.cloudStorageInfo;
-        syncNow.style.display = 'none';
+        elements.syncIndicator.classList.add('synced');
+        elements.syncText.textContent = pack.synced;
+        elements.storageInfo.textContent = pack.cloudStorageInfo;
+        if (elements.syncNow) elements.syncNow.style.display = 'none';
       } else if (status === 'syncing') {
-        syncIndicator.classList.add('syncing');
-        syncText.textContent = pack.syncing;
-        storageInfo.textContent = pack.cloudStorageInfo;
-        syncNow.style.display = 'none';
+        elements.syncIndicator.classList.add('syncing');
+        elements.syncText.textContent = pack.syncing;
+        elements.storageInfo.textContent = pack.cloudStorageInfo;
+        if (elements.syncNow) elements.syncNow.style.display = 'none';
       } else if (status === 'error') {
-        syncIndicator.classList.add('error');
-        syncText.textContent = pack.syncError;
-        storageInfo.textContent = pack.cloudStorageInfo;
-        syncNow.style.display = 'block';
+        elements.syncIndicator.classList.add('error');
+        elements.syncText.textContent = pack.syncError;
+        elements.storageInfo.textContent = pack.cloudStorageInfo;
+        if (elements.syncNow) elements.syncNow.style.display = 'block';
       } else if (status === 'local') {
-        syncIndicator.classList.add('local');
-        syncText.textContent = pack.local;
-        storageInfo.textContent = pack.localStorageInfo;
-        syncNow.style.display = 'none';
+        elements.syncIndicator.classList.add('local');
+        elements.syncText.textContent = pack.local;
+        elements.storageInfo.textContent = pack.localStorageInfo;
+        if (elements.syncNow) elements.syncNow.style.display = 'none';
       }
     }
 
+    // 修复的 updateUserUI 函数
     function updateUserUI() {
+      if (!elements.userDropdown || !elements.userAvatar) return;
+      
       if (currentUser) {
-        userAvatar.textContent = currentUser.displayName ? 
+        elements.userAvatar.textContent = currentUser.displayName ? 
           currentUser.displayName.charAt(0).toUpperCase() : 
           currentUser.email.charAt(0).toUpperCase();
         
-        // 更新用户菜单
-        userDropdown.innerHTML = `
+        elements.userDropdown.innerHTML = `
           <div class="user-dropdown-item" id="profileLink">
             <span>${currentUser.displayName || currentUser.email}</span>
           </div>
@@ -1313,11 +1346,14 @@
           </div>
         `;
         
-        // 重新绑定事件
-        document.getElementById('logoutLink').addEventListener('click', logout);
+        // 安全绑定事件
+        setTimeout(() => {
+          const logoutLink = document.getElementById('logoutLink');
+          if (logoutLink) logoutLink.addEventListener('click', logout);
+        }, 0);
       } else {
-        userAvatar.textContent = '?';
-        userDropdown.innerHTML = `
+        elements.userAvatar.textContent = '?';
+        elements.userDropdown.innerHTML = `
           <div class="user-dropdown-item" id="loginLink">
             <span data-t="login">Login for Cloud Sync</span>
           </div>
@@ -1329,13 +1365,25 @@
           </div>
         `;
         
-        // 重新绑定事件
-        document.getElementById('loginLink').addEventListener('click', showAuthModal);
+        // 安全绑定事件
+        setTimeout(() => {
+          const loginLink = document.getElementById('loginLink');
+          if (loginLink) loginLink.addEventListener('click', showAuthModal);
+        }, 0);
       }
       
-      // 绑定导出导入事件
-      document.getElementById('exportLink').addEventListener('click', exportAllNotes);
-      document.getElementById('importLink').addEventListener('click', () => document.getElementById('fileInput').click());
+      // 安全绑定导出导入事件
+      setTimeout(() => {
+        const exportLink = document.getElementById('exportLink');
+        if (exportLink) exportLink.addEventListener('click', exportAllNotes);
+        
+        const importLink = document.getElementById('importLink');
+        if (importLink) {
+          importLink.addEventListener('click', () => {
+            if (elements.fileInput) elements.fileInput.click();
+          });
+        }
+      }, 0);
     }
 
     // Firebase认证监听
@@ -1350,8 +1398,8 @@
         setSyncStatus('syncing');
         
         // 清空登录表单
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
+        if (elements.loginEmail) elements.loginEmail.value = '';
+        if (elements.loginPassword) elements.loginPassword.value = '';
       } else {
         currentUser = null;
         isUsingCloud = false;
@@ -1365,138 +1413,146 @@
     });
 
     // 用户注册
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    function setupRegisterForm() {
+      if (!elements.registerForm) return;
       
-      const name = document.getElementById('registerName').value.trim();
-      const email = document.getElementById('registerEmail').value.trim();
-      const password = document.getElementById('registerPassword').value;
-      const confirmPassword = document.getElementById('registerConfirmPassword').value;
-      
-      // 验证输入
-      if (!name || !email || !password || !confirmPassword) {
-        showAuthError('Please fill in all fields');
-        return;
-      }
-      
-      if (password !== confirmPassword) {
-        showAuthError('Passwords do not match');
-        return;
-      }
-      
-      if (password.length < 6) {
-        showAuthError('Password must be at least 6 characters');
-        return;
-      }
-      
-      if (!validateEmail(email)) {
-        showAuthError('Please enter a valid email address');
-        return;
-      }
-      
-      setLoading(registerBtn, true);
-      hideAuthError();
-      
-      try {
-        console.log("Attempting to register user:", email);
+      elements.registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        console.log("User registered successfully:", userCredential.user);
+        const name = document.getElementById('registerName')?.value.trim() || '';
+        const email = document.getElementById('registerEmail')?.value.trim() || '';
+        const password = document.getElementById('registerPassword')?.value || '';
+        const confirmPassword = document.getElementById('registerConfirmPassword')?.value || '';
         
-        // 更新用户资料
-        await userCredential.user.updateProfile({
-          displayName: name
-        });
+        // 验证输入
+        if (!name || !email || !password || !confirmPassword) {
+          showAuthError('Please fill in all fields');
+          return;
+        }
         
-        console.log("User profile updated successfully");
+        if (password !== confirmPassword) {
+          showAuthError('Passwords do not match');
+          return;
+        }
         
-        // 创建用户文档（可选，不是必需的）
+        if (password.length < 6) {
+          showAuthError('Password must be at least 6 characters');
+          return;
+        }
+        
+        if (!validateEmail(email)) {
+          showAuthError('Please enter a valid email address');
+          return;
+        }
+        
+        setLoading(elements.registerBtn, true);
+        hideAuthError();
+        
         try {
-          await db.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          console.log("Attempting to register user:", email);
+          
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          console.log("User registered successfully:", userCredential.user);
+          
+          // 更新用户资料
+          await userCredential.user.updateProfile({
+            displayName: name
           });
-          console.log("User document created successfully");
-        } catch (dbError) {
-          console.warn("Could not create user document:", dbError);
-          // 继续执行，这不是关键错误
+          
+          console.log("User profile updated successfully");
+          
+          // 创建用户文档（可选，不是必需的）
+          try {
+            await db.collection('users').doc(userCredential.user.uid).set({
+              name: name,
+              email: email,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("User document created successfully");
+          } catch (dbError) {
+            console.warn("Could not create user document:", dbError);
+            // 继续执行，这不是关键错误
+          }
+          
+          // 注册成功，认证状态监听器会自动处理后续逻辑
+          
+        } catch (error) {
+          console.error("Registration error:", error);
+          
+          // 提供更友好的错误消息
+          let errorMessage = error.message;
+          if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'This email is already registered. Please use a different email or login.';
+          } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Password is too weak. Please use a stronger password.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address. Please check your email.';
+          } else if (error.code === 'auth/operation-not-allowed') {
+            errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+          }
+          
+          showAuthError(errorMessage);
+          setLoading(elements.registerBtn, false);
         }
-        
-        // 注册成功，认证状态监听器会自动处理后续逻辑
-        
-      } catch (error) {
-        console.error("Registration error:", error);
-        
-        // 提供更友好的错误消息
-        let errorMessage = error.message;
-        if (error.code === 'auth/email-already-in-use') {
-          errorMessage = 'This email is already registered. Please use a different email or login.';
-        } else if (error.code === 'auth/weak-password') {
-          errorMessage = 'Password is too weak. Please use a stronger password.';
-        } else if (error.code === 'auth/invalid-email') {
-          errorMessage = 'Invalid email address. Please check your email.';
-        } else if (error.code === 'auth/operation-not-allowed') {
-          errorMessage = 'Email/password accounts are not enabled. Please contact support.';
-        }
-        
-        showAuthError(errorMessage);
-        setLoading(registerBtn, false);
-      }
-    });
+      });
+    }
 
     // 用户登录
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    function setupLoginForm() {
+      if (!elements.loginForm) return;
       
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      
-      // 验证输入
-      if (!email || !password) {
-        showAuthError('Please fill in all fields');
-        return;
-      }
-      
-      if (!validateEmail(email)) {
-        showAuthError('Please enter a valid email address');
-        return;
-      }
-      
-      setLoading(loginBtn, true);
-      hideAuthError();
-      
-      try {
-        console.log("Attempting to login user:", email);
+      elements.loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        console.log("User logged in successfully:", userCredential.user);
+        const email = document.getElementById('loginEmail')?.value.trim() || '';
+        const password = document.getElementById('loginPassword')?.value || '';
         
-        // 登录成功，认证状态监听器会自动处理后续逻辑
-        
-      } catch (error) {
-        console.error("Login error:", error);
-        
-        // 提供更友好的错误消息
-        let errorMessage = error.message;
-        if (error.code === 'auth/invalid-login-credentials') {
-          errorMessage = 'Invalid email or password. Please check your credentials.';
-        } else if (error.code === 'auth/user-not-found') {
-          errorMessage = 'No account found with this email. Please register first.';
-        } else if (error.code === 'auth/wrong-password') {
-          errorMessage = 'Incorrect password. Please try again.';
-        } else if (error.code === 'auth/invalid-email') {
-          errorMessage = 'Invalid email address. Please check your email.';
-        } else if (error.code === 'auth/user-disabled') {
-          errorMessage = 'This account has been disabled. Please contact support.';
-        } else if (error.code === 'auth/too-many-requests') {
-          errorMessage = 'Too many failed login attempts. Please try again later.';
+        // 验证输入
+        if (!email || !password) {
+          showAuthError('Please fill in all fields');
+          return;
         }
         
-        showAuthError(errorMessage);
-        setLoading(loginBtn, false);
-      }
-    });
+        if (!validateEmail(email)) {
+          showAuthError('Please enter a valid email address');
+          return;
+        }
+        
+        setLoading(elements.loginBtn, true);
+        hideAuthError();
+        
+        try {
+          console.log("Attempting to login user:", email);
+          
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          console.log("User logged in successfully:", userCredential.user);
+          
+          // 登录成功，认证状态监听器会自动处理后续逻辑
+          
+        } catch (error) {
+          console.error("Login error:", error);
+          
+          // 提供更友好的错误消息
+          let errorMessage = error.message;
+          if (error.code === 'auth/invalid-login-credentials') {
+            errorMessage = 'Invalid email or password. Please check your credentials.';
+          } else if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email. Please register first.';
+          } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Incorrect password. Please try again.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address. Please check your email.';
+          } else if (error.code === 'auth/user-disabled') {
+            errorMessage = 'This account has been disabled. Please contact support.';
+          } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many failed login attempts. Please try again later.';
+          }
+          
+          showAuthError(errorMessage);
+          setLoading(elements.loginBtn, false);
+        }
+      });
+    }
 
     // 辅助函数：验证邮箱格式
     function validateEmail(email) {
@@ -1858,12 +1914,13 @@
 
     // 渲染函数
     function renderNotes(filter = '') {
-      const notesEl = document.getElementById('notes');
+      if (!elements.notes) return;
+      
       const activeNotes = notes.filter(n => !n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
 
       if (activeNotes.length === 0) {
         const pack = currentLang === 'cn' ? UI.cn : UI.en;
-        notesEl.innerHTML = `
+        elements.notes.innerHTML = `
           <div class="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M12 11v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -1874,7 +1931,7 @@
         return;
       }
 
-      notesEl.innerHTML = '';
+      elements.notes.innerHTML = '';
       for (const n of activeNotes) {
         const el = document.createElement('div');
         el.className = `note`;
@@ -1903,27 +1960,28 @@
             <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
           </div>
         `;
-        notesEl.appendChild(el);
+        elements.notes.appendChild(el);
       }
     }
 
     function renderCompletedNotes(filter = '') {
-      const completedSection = document.getElementById('completedSection');
-      const completedNotesList = document.getElementById('completedNotesList');
+      if (!elements.completedSection || !elements.completedNotesList) return;
+      
       const completedNotes = notes.filter(n => n.done && (n.title + ' ' + n.content).toLowerCase().includes(filter.toLowerCase()));
       
       if (completedNotes.length === 0) {
-        completedSection.style.display = 'none';
+        elements.completedSection.style.display = 'none';
         return;
       }
       
-      completedSection.style.display = 'block';
-      completedNotesList.innerHTML = '';
+      elements.completedSection.style.display = 'block';
+      elements.completedNotesList.innerHTML = '';
       
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
       // 更新已完成笔记区域的标题
-      document.querySelector('#completedSection .section-title').textContent = pack.completedNotesSection;
+      const sectionTitle = elements.completedSection.querySelector('.section-title');
+      if (sectionTitle) sectionTitle.textContent = pack.completedNotesSection;
       
       for (const n of completedNotes) {
         const el = document.createElement('div');
@@ -1950,12 +2008,13 @@
             <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
           </div>
         `;
-        completedNotesList.appendChild(el);
+        elements.completedNotesList.appendChild(el);
       }
     }
 
     function renderReminders() {
-      const remindersEl = document.getElementById('reminders');
+      if (!elements.reminders) return;
+      
       const now = new Date();
       const upcoming = notes
         .filter(n => n.remindAt && !n.done)
@@ -1968,11 +2027,11 @@
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
       if (upcoming.length === 0) {
-        remindersEl.innerHTML = `<div style="color:var(--muted);text-align:center;padding:20px">${pack.noReminders}</div>`;
+        elements.reminders.innerHTML = `<div style="color:var(--muted);text-align:center;padding:20px">${pack.noReminders}</div>`;
         return;
       }
       
-      remindersEl.innerHTML = '';
+      elements.reminders.innerHTML = '';
       for (const n of upcoming) {
         const el = document.createElement('div');
         const when = n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt);
@@ -1989,18 +2048,20 @@
             ${pack.delete}
           </button>
         `;
-        remindersEl.appendChild(el);
+        elements.reminders.appendChild(el);
       }
     }
 
     function updateStats() {
+      if (!elements.totalNotes || !elements.activeReminders || !elements.completedNotes) return;
+      
       const total = notes.length;
       const active = notes.filter(n => n.remindAt && !n.done).length;
       const completed = notes.filter(n => n.done).length;
       
-      document.getElementById('totalNotes').textContent = total;
-      document.getElementById('activeReminders').textContent = active;
-      document.getElementById('completedNotes').textContent = completed;
+      elements.totalNotes.textContent = total;
+      elements.activeReminders.textContent = active;
+      elements.completedNotes.textContent = completed;
     }
 
     function escapeHtml(s) {
@@ -2026,15 +2087,15 @@
       });
       
       // 更新按钮文本
-      document.getElementById('newNote').textContent = pack.newNote;
-      document.getElementById('save').textContent = pack.save;
-      document.getElementById('clear').textContent = pack.clear;
-      document.getElementById('syncNow').textContent = pack.syncNow;
+      if (elements.newNote) elements.newNote.textContent = pack.newNote;
+      if (elements.save) elements.save.textContent = pack.save;
+      if (elements.clear) elements.clear.textContent = pack.clear;
+      if (elements.syncNow) elements.syncNow.textContent = pack.syncNow;
       
       // 更新占位符
-      document.getElementById('title').placeholder = pack.titlePlaceholder;
-      document.getElementById('content').placeholder = pack.contentPlaceholder;
-      document.getElementById('q').placeholder = pack.searchPlaceholder;
+      if (elements.title) elements.title.placeholder = pack.titlePlaceholder;
+      if (elements.content) elements.content.placeholder = pack.contentPlaceholder;
+      if (elements.q) elements.q.placeholder = pack.searchPlaceholder;
       
       // 更新同步状态
       setSyncStatus(isUsingCloud ? 'synced' : 'local');
@@ -2042,14 +2103,14 @@
 
     function applyTheme() {
       document.documentElement.setAttribute('data-theme', theme);
-      app.setAttribute('data-theme', theme);
-      document.getElementById('theme').textContent = theme === 'dark' ? '☀️' : '🌙';
+      if (elements.app) elements.app.setAttribute('data-theme', theme);
+      if (elements.theme) elements.theme.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
     function updateClock() {
       const now = new Date();
-      document.getElementById('datetime').textContent = now.toLocaleString();
-      document.getElementById('lunar').textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
+      if (elements.datetime) elements.datetime.textContent = now.toLocaleString();
+      if (elements.lunar) elements.lunar.textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
     }
 
     function getLunarDay(d) {
@@ -2072,181 +2133,172 @@
       return map[(day - 1) % 30] || '初?';
     }
 
-    // 事件监听器
-    document.getElementById('save').addEventListener('click', () => {
-      const t = document.getElementById('title').value.trim();
-      const c = document.getElementById('content').value.trim();
-      const r = document.getElementById('remindAt').value || null;
-      createNote(t, c, r);
-      document.getElementById('title').value = '';
-      document.getElementById('content').value = '';
-      document.getElementById('remindAt').value = '';
-    });
-
-    document.getElementById('newNote').addEventListener('click', () => document.getElementById('title').focus());
-
-    document.getElementById('fileInput').addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        importNotes(e.target.files[0]);
-        e.target.value = ''; // Reset file input
-      }
-    });
-
-    skipAuth.addEventListener('click', () => {
-      hideAuthModal();
-      loadLocalNotes();
-    });
-
-    syncNow.addEventListener('click', () => {
-      if (currentUser && isUsingCloud) {
-        loadCloudNotes();
-      }
-    });
-
-    userAvatar.addEventListener('click', () => {
-      userDropdown.classList.toggle('active');
-    });
-
-    // 关闭下拉菜单当点击外部
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.user-menu')) {
-        userDropdown.classList.remove('active');
-      }
-    });
-
-    // 切换登录/注册标签
-    document.getElementById('loginTab').addEventListener('click', () => {
-      document.getElementById('loginTab').classList.add('active');
-      document.getElementById('registerTab').classList.remove('active');
-      document.getElementById('loginForm').classList.add('active');
-      document.getElementById('registerForm').classList.remove('active');
-      hideAuthError();
-    });
-
-    document.getElementById('registerTab').addEventListener('click', () => {
-      document.getElementById('registerTab').classList.add('active');
-      document.getElementById('loginTab').classList.remove('active');
-      document.getElementById('registerForm').classList.add('active');
-      document.getElementById('loginForm').classList.remove('active');
-      hideAuthError();
-    });
-
-    // 笔记操作事件
-    document.getElementById('notes').addEventListener('click', e => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const action = btn.dataset.action;
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
+    // 设置登录/注册标签切换
+    function setupAuthTabs() {
+      const loginTab = document.getElementById('loginTab');
+      const registerTab = document.getElementById('registerTab');
       
-      if (action === 'delete') {
-        if (confirm(pack.deleteConfirm)) {
-          deleteNote(id);
+      if (loginTab) {
+        loginTab.addEventListener('click', () => {
+          loginTab.classList.add('active');
+          if (registerTab) registerTab.classList.remove('active');
+          if (elements.loginForm) elements.loginForm.classList.add('active');
+          if (elements.registerForm) elements.registerForm.classList.remove('active');
+          hideAuthError();
+        });
+      }
+      
+      if (registerTab) {
+        registerTab.addEventListener('click', () => {
+          if (loginTab) loginTab.classList.remove('active');
+          registerTab.classList.add('active');
+          if (elements.loginForm) elements.loginForm.classList.remove('active');
+          if (elements.registerForm) elements.registerForm.classList.add('active');
+          hideAuthError();
+        });
+      }
+    }
+
+    // 设置笔记操作事件
+    function setupNoteEvents() {
+      // 笔记操作事件
+      if (elements.notes) {
+        elements.notes.addEventListener('click', e => {
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          const id = btn.dataset.id;
+          const action = btn.dataset.action;
+          const pack = currentLang === 'cn' ? UI.cn : UI.en;
+          
+          if (action === 'delete') {
+            if (confirm(pack.deleteConfirm)) {
+              deleteNote(id);
+            }
+          }
+          if (action === 'done') {
+            toggleDone(id);
+          }
+          if (action === 'set-reminder') {
+            openReminderModal(id);
+          }
+          if (action === 'edit') {
+            openEditModal(id);
+          }
+        });
+      }
+
+      // 已完成笔记操作事件
+      if (elements.completedNotesList) {
+        elements.completedNotesList.addEventListener('click', e => {
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          const id = btn.dataset.id;
+          const action = btn.dataset.action;
+          const pack = currentLang === 'cn' ? UI.cn : UI.en;
+          
+          if (action === 'delete') {
+            if (confirm(pack.deleteConfirm)) {
+              deleteNote(id);
+            }
+          }
+          if (action === 'undo-done') {
+            toggleDone(id);
+          }
+        });
+      }
+
+      // 提醒操作事件
+      if (elements.reminders) {
+        elements.reminders.addEventListener('click', e => {
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          const id = btn.dataset.id;
+          const pack = currentLang === 'cn' ? UI.cn : UI.en;
+          
+          if (btn.dataset.action === 'delete-reminder') {
+            if (confirm(pack.deleteReminderConfirm)) {
+              deleteReminder(id);
+            }
+          }
+        });
+      }
+    }
+
+    // 设置模态框事件
+    function setupModalEvents() {
+      // 提醒模态框
+      if (elements.closeReminderModal) {
+        elements.closeReminderModal.addEventListener('click', () => {
+          if (elements.reminderModal) elements.reminderModal.style.display = 'none';
+        });
+      }
+      
+      if (elements.cancelReminder) {
+        elements.cancelReminder.addEventListener('click', () => {
+          if (elements.reminderModal) elements.reminderModal.style.display = 'none';
+        });
+      }
+      
+      if (elements.saveReminder) {
+        elements.saveReminder.addEventListener('click', () => {
+          if (currentNoteId && elements.reminderDateTime && elements.reminderDateTime.value) {
+            setReminder(currentNoteId, elements.reminderDateTime.value);
+            if (elements.reminderModal) elements.reminderModal.style.display = 'none';
+          }
+        });
+      }
+
+      // 编辑模态框
+      if (elements.closeEditModal) {
+        elements.closeEditModal.addEventListener('click', () => {
+          if (elements.editModal) elements.editModal.style.display = 'none';
+        });
+      }
+      
+      if (elements.cancelEdit) {
+        elements.cancelEdit.addEventListener('click', () => {
+          if (elements.editModal) elements.editModal.style.display = 'none';
+        });
+      }
+      
+      if (elements.saveEdit) {
+        elements.saveEdit.addEventListener('click', () => {
+          if (currentNoteId && elements.editTitle && elements.editTitle.value.trim()) {
+            updateNote(currentNoteId, elements.editTitle.value.trim(), elements.editContent ? elements.editContent.value.trim() : '');
+            if (elements.editModal) elements.editModal.style.display = 'none';
+          }
+        });
+      }
+
+      // 点击模态框外部关闭
+      window.addEventListener('click', (e) => {
+        if (elements.reminderModal && e.target === elements.reminderModal) {
+          elements.reminderModal.style.display = 'none';
         }
-      }
-      if (action === 'done') {
-        toggleDone(id);
-      }
-      if (action === 'set-reminder') {
-        openReminderModal(id);
-      }
-      if (action === 'edit') {
-        openEditModal(id);
-      }
-    });
-
-    document.getElementById('completedNotesList').addEventListener('click', e => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const action = btn.dataset.action;
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      
-      if (action === 'delete') {
-        if (confirm(pack.deleteConfirm)) {
-          deleteNote(id);
+        if (elements.editModal && e.target === elements.editModal) {
+          elements.editModal.style.display = 'none';
         }
-      }
-      if (action === 'undo-done') {
-        toggleDone(id);
-      }
-    });
-
-    document.getElementById('reminders').addEventListener('click', e => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const pack = currentLang === 'cn' ? UI.cn : UI.en;
-      
-      if (btn.dataset.action === 'delete-reminder') {
-        if (confirm(pack.deleteReminderConfirm)) {
-          deleteReminder(id);
-        }
-      }
-    });
-
-    // 搜索功能
-    document.getElementById('q').addEventListener('input', () => {
-      renderNotes(document.getElementById('q').value);
-      renderCompletedNotes(document.getElementById('q').value);
-    });
-    
-    document.getElementById('clear').addEventListener('click', () => {
-      document.getElementById('q').value = '';
-      renderNotes();
-      renderCompletedNotes();
-    });
-
-    // 语言切换
-    document.getElementById('lang').addEventListener('click', () => {
-      currentLang = currentLang === 'cn' ? 'en' : 'cn';
-      app.setAttribute('data-lang', currentLang);
-      applyLang();
-      renderNotes(document.getElementById('q').value);
-      renderCompletedNotes(document.getElementById('q').value);
-      renderReminders();
-    });
-
-    // 主题切换
-    document.getElementById('theme').addEventListener('click', () => {
-      theme = theme === 'dark' ? 'light' : 'dark';
-      app.setAttribute('data-theme', theme);
-      applyTheme();
-    });
-
-    // 初始化应用
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log("DOM loaded, initializing app...");
-      
-      loadLocalNotes(); // 默认加载本地数据
-      applyLang();
-      applyTheme();
-      setInterval(updateClock, 1000);
-      updateClock();
-      setTimeout(checkReminders, 2000);
-      updateUserUI();
-    });
+      });
+    }
 
     // 模态框功能
-    let currentNoteId = null;
-    
     function openReminderModal(noteId) {
       currentNoteId = noteId;
       const note = notes.find(n => n.id === noteId);
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
       if (note && note.remindAt) {
-        document.getElementById('reminderModalTitle').textContent = pack.editReminder;
+        if (elements.reminderModalTitle) elements.reminderModalTitle.textContent = pack.editReminder;
         const remindDate = note.remindAt instanceof Date ? note.remindAt : new Date(note.remindAt);
-        document.getElementById('reminderDateTime').value = formatDateTimeLocal(remindDate);
+        if (elements.reminderDateTime) elements.reminderDateTime.value = formatDateTimeLocal(remindDate);
       } else {
-        document.getElementById('reminderModalTitle').textContent = pack.setReminder;
+        if (elements.reminderModalTitle) elements.reminderModalTitle.textContent = pack.setReminder;
         // 设置默认时间为当前时间+1小时
         const defaultTime = new Date(Date.now() + 60 * 60 * 1000);
-        document.getElementById('reminderDateTime').value = formatDateTimeLocal(defaultTime);
+        if (elements.reminderDateTime) elements.reminderDateTime.value = formatDateTimeLocal(defaultTime);
       }
       
-      document.getElementById('reminderModal').style.display = 'flex';
+      if (elements.reminderModal) elements.reminderModal.style.display = 'flex';
     }
 
     function openEditModal(noteId) {
@@ -2254,9 +2306,9 @@
       const note = notes.find(n => n.id === noteId);
       
       if (note) {
-        document.getElementById('editTitle').value = note.title;
-        document.getElementById('editContent').value = note.content;
-        document.getElementById('editModal').style.display = 'flex';
+        if (elements.editTitle) elements.editTitle.value = note.title;
+        if (elements.editContent) elements.editContent.value = note.content;
+        if (elements.editModal) elements.editModal.style.display = 'flex';
       }
     }
 
@@ -2270,45 +2322,129 @@
       return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
-    // 模态框关闭事件
-    document.getElementById('closeReminderModal').addEventListener('click', () => {
-      document.getElementById('reminderModal').style.display = 'none';
-    });
+    // 初始化应用
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM loaded, initializing app...");
+      
+      // 初始化所有DOM元素引用
+      initializeElements();
+      
+      // 设置所有事件监听器
+      setTimeout(() => {
+        // 设置认证表单
+        setupRegisterForm();
+        setupLoginForm();
+        setupAuthTabs();
+        
+        // 设置笔记相关事件
+        setupNoteEvents();
+        setupModalEvents();
+        
+        // 设置其他事件
+        if (elements.save) {
+          elements.save.addEventListener('click', () => {
+            const t = elements.title ? elements.title.value.trim() : '';
+            const c = elements.content ? elements.content.value.trim() : '';
+            const r = elements.remindAt ? elements.remindAt.value : null;
+            createNote(t, c, r);
+            if (elements.title) elements.title.value = '';
+            if (elements.content) elements.content.value = '';
+            if (elements.remindAt) elements.remindAt.value = '';
+          });
+        }
 
-    document.getElementById('cancelReminder').addEventListener('click', () => {
-      document.getElementById('reminderModal').style.display = 'none';
-    });
+        if (elements.newNote) {
+          elements.newNote.addEventListener('click', () => {
+            if (elements.title) elements.title.focus();
+          });
+        }
 
-    document.getElementById('saveReminder').addEventListener('click', () => {
-      if (currentNoteId && document.getElementById('reminderDateTime').value) {
-        setReminder(currentNoteId, document.getElementById('reminderDateTime').value);
-        document.getElementById('reminderModal').style.display = 'none';
-      }
-    });
+        if (elements.fileInput) {
+          elements.fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+              importNotes(e.target.files[0]);
+              e.target.value = ''; // Reset file input
+            }
+          });
+        }
 
-    document.getElementById('closeEditModal').addEventListener('click', () => {
-      document.getElementById('editModal').style.display = 'none';
-    });
+        if (elements.skipAuth) {
+          elements.skipAuth.addEventListener('click', () => {
+            hideAuthModal();
+            loadLocalNotes();
+          });
+        }
 
-    document.getElementById('cancelEdit').addEventListener('click', () => {
-      document.getElementById('editModal').style.display = 'none';
-    });
+        if (elements.syncNow) {
+          elements.syncNow.addEventListener('click', () => {
+            if (currentUser && isUsingCloud) {
+              loadCloudNotes();
+            }
+          });
+        }
 
-    document.getElementById('saveEdit').addEventListener('click', () => {
-      if (currentNoteId && document.getElementById('editTitle').value.trim()) {
-        updateNote(currentNoteId, document.getElementById('editTitle').value.trim(), document.getElementById('editContent').value.trim());
-        document.getElementById('editModal').style.display = 'none';
-      }
-    });
+        if (elements.userAvatar) {
+          elements.userAvatar.addEventListener('click', () => {
+            if (elements.userDropdown) {
+              elements.userDropdown.classList.toggle('active');
+            }
+          });
+        }
 
-    // 点击模态框外部关闭
-    window.addEventListener('click', (e) => {
-      if (e.target === document.getElementById('reminderModal')) {
-        document.getElementById('reminderModal').style.display = 'none';
-      }
-      if (e.target === document.getElementById('editModal')) {
-        document.getElementById('editModal').style.display = 'none';
-      }
+        // 关闭下拉菜单当点击外部
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.user-menu') && elements.userDropdown) {
+            elements.userDropdown.classList.remove('active');
+          }
+        });
+
+        // 搜索功能
+        if (elements.q) {
+          elements.q.addEventListener('input', () => {
+            renderNotes(elements.q.value);
+            renderCompletedNotes(elements.q.value);
+          });
+        }
+        
+        if (elements.clear) {
+          elements.clear.addEventListener('click', () => {
+            if (elements.q) elements.q.value = '';
+            renderNotes();
+            renderCompletedNotes();
+          });
+        }
+
+        // 语言切换
+        if (elements.lang) {
+          elements.lang.addEventListener('click', () => {
+            currentLang = currentLang === 'cn' ? 'en' : 'cn';
+            if (elements.app) elements.app.setAttribute('data-lang', currentLang);
+            applyLang();
+            renderNotes(elements.q ? elements.q.value : '');
+            renderCompletedNotes(elements.q ? elements.q.value : '');
+            renderReminders();
+          });
+        }
+
+        // 主题切换
+        if (elements.theme) {
+          elements.theme.addEventListener('click', () => {
+            theme = theme === 'dark' ? 'light' : 'dark';
+            applyTheme();
+          });
+        }
+
+        // 初始化应用状态
+        loadLocalNotes();
+        applyLang();
+        applyTheme();
+        setInterval(updateClock, 1000);
+        updateClock();
+        setTimeout(checkReminders, 2000);
+        updateUserUI();
+        
+        console.log("App initialized successfully");
+      }, 100);
     });
   </script>
 </body>
