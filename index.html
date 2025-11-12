@@ -378,12 +378,101 @@
       padding: 16px;
     }
     
+    /* 响应式布局优化 */
     @media (max-width: 900px) {
       main {
         grid-template-columns: 1fr;
       }
       aside {
         position: static;
+        order: 1; /* 将侧边栏移到主内容上方 */
+      }
+      .left {
+        order: 2; /* 将左侧内容移到侧边栏下方 */
+      }
+      
+      /* 在小屏幕上优化顶部栏布局 */
+      .topbar {
+        flex-wrap: wrap;
+      }
+      .timecard {
+        min-width: auto;
+        flex: 1;
+      }
+      
+      /* 优化搜索框在小屏幕上的显示 */
+      .search {
+        min-width: auto;
+      }
+      
+      /* 优化控制按钮在小屏幕上的显示 */
+      .controls {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+    }
+    
+    /* 在小屏幕上进一步优化布局 */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .search {
+        order: 1;
+        width: 100%;
+        margin-top: 12px;
+      }
+      
+      .app {
+        padding: 16px;
+        margin: 16px auto;
+      }
+      
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .timecard {
+        width: 100%;
+      }
+    }
+    
+    /* 在非常小的屏幕上进一步优化 */
+    @media (max-width: 480px) {
+      .brand {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .user-menu {
+        align-self: flex-end;
+      }
+      
+      .note .meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      .note .meta .pill {
+        margin-bottom: 4px;
       }
     }
     
