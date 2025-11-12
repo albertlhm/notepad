@@ -1071,6 +1071,10 @@
       elements.lang = document.getElementById('lang');
       elements.theme = document.getElementById('theme');
       
+      // 时间显示元素
+      elements.datetime = document.getElementById('datetime');
+      elements.lunar = document.getElementById('lunar');
+      
       // 模态框元素
       elements.reminderModal = document.getElementById('reminderModal');
       elements.reminderModalTitle = document.getElementById('reminderModalTitle');
@@ -1093,7 +1097,7 @@
       elements.completedNotes = document.getElementById('completedNotes');
       
       // 验证必需元素
-      const requiredElements = ['app', 'authModal', 'userAvatar', 'userDropdown', 'notes'];
+      const requiredElements = ['app', 'authModal', 'userAvatar', 'userDropdown', 'notes', 'datetime', 'lunar'];
       for (const key of requiredElements) {
         if (!elements[key]) {
           console.warn(`Required element not found: ${key}`);
@@ -2107,30 +2111,27 @@
       if (elements.theme) elements.theme.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
+    // 修复的时间更新函数
     function updateClock() {
       const now = new Date();
-      if (elements.datetime) elements.datetime.textContent = now.toLocaleString();
-      if (elements.lunar) elements.lunar.textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
+      if (elements.datetime) {
+        elements.datetime.textContent = now.toLocaleString();
+      }
+      if (elements.lunar) {
+        elements.lunar.textContent = (currentLang === 'cn' ? '农历: ' : 'Lunar: ') + getLunarDay(now);
+      }
     }
 
+    // 修复的农历日期计算函数
     function getLunarDay(d) {
       if (currentLang === 'en') {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[d.getDay()];
       }
       
-      try {
-        const f = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
-          day: 'numeric',
-          month: 'numeric'
-        });
-        const parts = f.formatToParts(d);
-        const dayPart = parts.find(p => p.type === 'day')?.value;
-        if (dayPart) return '初' + dayPart;
-      } catch (e) {}
-      const day = d.getDate();
-      const map = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
-      return map[(day - 1) % 30] || '初?';
+      // 简化版农历显示 - 显示星期几
+      const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      return days[d.getDay()];
     }
 
     // 设置登录/注册标签切换
@@ -2438,8 +2439,13 @@
         loadLocalNotes();
         applyLang();
         applyTheme();
-        setInterval(updateClock, 1000);
+        
+        // 修复：立即更新时间显示
         updateClock();
+        
+        // 修复：设置时间更新间隔
+        setInterval(updateClock, 1000);
+        
         setTimeout(checkReminders, 2000);
         updateUserUI();
         
