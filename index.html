@@ -505,29 +505,41 @@
         margin-bottom: 2px;
       }
       
-      /* 移除移动端底部导航栏 */
+      /* 移动端优化 - 底部操作栏 */
       .mobile-bottom-nav {
-        display: none !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-around;
+        padding: 6px 0;
+        z-index: 100;
       }
       
-      /* 移除移动端底部导航栏空间 */
+      .mobile-bottom-nav .btn {
+        flex-direction: column;
+        font-size: 11px;
+        padding: 6px;
+        gap: 3px;
+        min-height: 50px;
+      }
+      
+      /* 为移动端底部导航添加空间 */
       body {
-        padding-bottom: 0;
+        padding-bottom: 60px;
       }
       
       .app {
-        margin-bottom: 0;
+        margin-bottom: 60px;
       }
     }
     
     /* 移动端优化 - 隐藏桌面元素 */
     @media (max-width: 768px) {
       .desktop-only {
-        display: none !important;
-      }
-      
-      /* 隐藏移动端的"New Note"按钮 */
-      .mobile-new-note {
         display: none !important;
       }
     }
@@ -974,6 +986,43 @@
       display: none;
     }
     
+    @media (max-width: 480px) {
+      .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card);
+        border-top: 1px solid var(--border);
+        justify-content: space-around;
+        padding: 5px 0;
+        z-index: 100;
+        box-shadow: 0 -2px 8px var(--shadow);
+      }
+      
+      .mobile-bottom-nav .btn {
+        flex-direction: column;
+        font-size: 10px;
+        padding: 5px;
+        gap: 2px;
+        flex: 1;
+        max-width: 70px;
+        justify-content: center;
+        align-items: center;
+        min-height: 45px;
+      }
+      
+      /* 为移动端底部导航添加空间 */
+      body {
+        padding-bottom: 55px;
+      }
+      
+      .app {
+        margin-bottom: 55px;
+      }
+    }
+
     /* 新增样式：横向按钮布局 */
     .note-actions {
       display: flex;
@@ -1052,7 +1101,7 @@
       color: var(--text);
     }
     
-    /* 移动端搜索框优化 - 缩短搜索框 */
+    /* 移动端搜索框优化 */
     .search-container {
       display: flex;
       gap: 8px;
@@ -1113,8 +1162,6 @@
     
     .mobile-controls-top .search-container {
       flex: 1;
-      /* 移动端搜索框缩短 */
-      max-width: 200px;
     }
     
     .mobile-controls-top .user-menu {
@@ -1164,8 +1211,6 @@
     
     .mobile-single-row .search-container {
       flex: 1;
-      /* 移动端搜索框缩短 */
-      max-width: 180px;
     }
     
     .mobile-single-row .user-menu {
@@ -1186,6 +1231,96 @@
     
     .mobile-single-row .control-buttons .btn span:last-child {
       display: none;
+    }
+    
+    /* 清除按钮图标样式 */
+    .clear-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: var(--radius-md);
+      transition: all 0.3s ease;
+    }
+    
+    .clear-icon:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--danger);
+    }
+    
+    /* 移动端搜索框带清除按钮 */
+    .search-with-clear {
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px var(--shadow);
+      width: 100%;
+    }
+    
+    .search-with-clear .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      color: var(--text);
+      min-height: 36px;
+      padding: 0;
+    }
+    
+    .search-with-clear .clear-icon {
+      margin-left: 8px;
+    }
+    
+    /* 底部信息窗口 */
+    .info-window {
+      background: var(--card);
+      padding: 14px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-top: 20px;
+    }
+    
+    .info-window-title {
+      font-weight: var(--font-weight-bold);
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    
+    .info-window-content {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    
+    .info-tip {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 6px;
+      padding: 6px;
+      background: rgba(0,0,0,0.05);
+      border-radius: var(--radius-md);
+    }
+    
+    /* 移动端底部信息窗口 */
+    @media (max-width: 768px) {
+      .desktop-info {
+        display: none;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .mobile-info {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -1302,9 +1437,13 @@
         
         <!-- 移动端控制栏 - 单行布局 -->
         <div class="mobile-single-row mobile-only">
-          <div class="search-container">
+          <div class="search-with-clear">
             <input id="qMobile" class="search-input" placeholder="Search notes" />
-            <button class="btn" id="clearMobile">Clear</button>
+            <button class="clear-icon" id="clearMobile" title="Clear search">✕</button>
+          </div>
+          <div class="control-buttons">
+            <div class="btn" id="themeMobile">🌙</div>
+            <div class="btn" id="langMobile">🌐</div>
           </div>
           <div class="user-menu">
             <div class="mobile-user-avatar" id="userAvatar">?</div>
@@ -1320,10 +1459,6 @@
               </div>
             </div>
           </div>
-          <div class="control-buttons">
-            <div class="btn" id="langMobile">🌐</div>
-            <div class="btn" id="themeMobile">🌙</div>
-          </div>
         </div>
       </div>
     </header>
@@ -1334,8 +1469,7 @@
       </div>
       <div style="flex:1"></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <!-- 隐藏移动端的"New Note"按钮 -->
-        <div class="btn mobile-new-note" id="mobileNewNote" style="display:none">New Note</div>
+        <div class="btn mobile-only" id="mobileNewNote">New Note</div>
         <div class="btn" id="syncNow" style="display:none">Sync Now</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
       </div>
@@ -1378,7 +1512,8 @@
           <div style="font-weight:700;font-size:15px;margin-bottom:6px" data-t="remindersTitle">Reminders</div>
           <div class="reminderList" id="reminders"></div>
         </div>
-        <div style="background:var(--card);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow);margin-top:12px">
+        <!-- 桌面端信息窗口 -->
+        <div class="desktop-info" style="background:var(--card);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow);margin-top:12px">
           <div style="font-weight:700;font-size:15px;margin-bottom:6px" data-t="infoTitle">Info</div>
           <div style="color:var(--muted);font-size:13px;margin-top:6px" id="storageInfo" data-t="localStorageInfo">Your notes are stored locally in your browser.</div>
           <div style="color:var(--muted);font-size:11px;margin-top:6px;padding:6px;background:rgba(0,0,0,0.05);border-radius:var(--radius-md)">
@@ -1387,7 +1522,37 @@
         </div>
       </aside>
     </main>
+    
+    <!-- 移动端底部信息窗口 -->
+    <div class="info-window mobile-info">
+      <div class="info-window-title" data-t="infoTitle">Info</div>
+      <div class="info-window-content" id="mobileStorageInfo" data-t="localStorageInfo">Your notes are stored locally in your browser.</div>
+      <div class="info-tip">
+        💡 <span data-t="notificationTip">Tip: First time setting a reminder will request notification permission, please allow browser to send desktop notifications</span>
+      </div>
+    </div>
+    
     <footer data-t="footer">Simple Notebook — Use locally or login for cloud sync · Beautiful UI · Supports English/Chinese</footer>
+  </div>
+
+  <!-- 移动端底部导航 -->
+  <div class="mobile-bottom-nav mobile-only">
+    <button class="btn" id="mobileNewNoteBottom">
+      <span>📝</span>
+      <span>New</span>
+    </button>
+    <button class="btn" id="mobileSearchBottom">
+      <span>🔍</span>
+      <span>Search</span>
+    </button>
+    <button class="btn" id="mobileReminders">
+      <span>⏰</span>
+      <span>Reminders</span>
+    </button>
+    <button class="btn" id="mobileMenu">
+      <span>☰</span>
+      <span>Menu</span>
+    </button>
   </div>
 
   <!-- 设置提醒模态框 -->
@@ -1483,6 +1648,7 @@
       elements.syncIndicator = document.getElementById('syncIndicator');
       elements.syncText = document.getElementById('syncText');
       elements.storageInfo = document.getElementById('storageInfo');
+      elements.mobileStorageInfo = document.getElementById('mobileStorageInfo');
       elements.skipAuth = document.getElementById('skipAuth');
       elements.syncNow = document.getElementById('syncNow');
       elements.fileInput = document.getElementById('fileInput');
@@ -1537,6 +1703,10 @@
       
       // 移动端元素
       elements.mobileNewNote = document.getElementById('mobileNewNote');
+      elements.mobileNewNoteBottom = document.getElementById('mobileNewNoteBottom');
+      elements.mobileSearchBottom = document.getElementById('mobileSearchBottom');
+      elements.mobileReminders = document.getElementById('mobileReminders');
+      elements.mobileMenu = document.getElementById('mobileMenu');
     }
 
     // UI文本
@@ -1735,7 +1905,7 @@
     }
 
     function setSyncStatus(status) {
-      if (!elements.syncIndicator || !elements.syncText || !elements.storageInfo) return;
+      if (!elements.syncIndicator || !elements.syncText || !elements.storageInfo || !elements.mobileStorageInfo) return;
       
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
@@ -1744,21 +1914,25 @@
         elements.syncIndicator.classList.add('synced');
         elements.syncText.textContent = pack.synced;
         elements.storageInfo.textContent = pack.cloudStorageInfo;
+        elements.mobileStorageInfo.textContent = pack.cloudStorageInfo;
         if (elements.syncNow) elements.syncNow.style.display = 'none';
       } else if (status === 'syncing') {
         elements.syncIndicator.classList.add('syncing');
         elements.syncText.textContent = pack.syncing;
         elements.storageInfo.textContent = pack.cloudStorageInfo;
+        elements.mobileStorageInfo.textContent = pack.cloudStorageInfo;
         if (elements.syncNow) elements.syncNow.style.display = 'none';
       } else if (status === 'error') {
         elements.syncIndicator.classList.add('error');
         elements.syncText.textContent = pack.syncError;
         elements.storageInfo.textContent = pack.cloudStorageInfo;
+        elements.mobileStorageInfo.textContent = pack.cloudStorageInfo;
         if (elements.syncNow) elements.syncNow.style.display = 'block';
       } else if (status === 'local') {
         elements.syncIndicator.classList.add('local');
         elements.syncText.textContent = pack.local;
         elements.storageInfo.textContent = pack.localStorageInfo;
+        elements.mobileStorageInfo.textContent = pack.localStorageInfo;
         if (elements.syncNow) elements.syncNow.style.display = 'none';
       }
     }
@@ -2812,6 +2986,42 @@
             elements.title.focus();
             // 平滑滚动到编辑器
             elements.editor.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      
+      if (elements.mobileNewNoteBottom) {
+        elements.mobileNewNoteBottom.addEventListener('click', () => {
+          if (elements.title) {
+            elements.title.focus();
+            // 平滑滚动到编辑器
+            elements.editor.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      
+      // 移动端搜索
+      if (elements.mobileSearchBottom) {
+        elements.mobileSearchBottom.addEventListener('click', () => {
+          if (elements.qMobile) {
+            elements.qMobile.focus();
+          }
+        });
+      }
+      
+      // 移动端提醒
+      if (elements.mobileReminders) {
+        elements.mobileReminders.addEventListener('click', () => {
+          // 平滑滚动到提醒区域
+          document.querySelector('aside').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      // 移动端菜单
+      if (elements.mobileMenu) {
+        elements.mobileMenu.addEventListener('click', () => {
+          if (elements.userDropdown) {
+            elements.userDropdown.classList.toggle('active');
           }
         });
       }
