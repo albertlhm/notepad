@@ -74,8 +74,8 @@
     
     .app {
       max-width: 1080px;
-      margin: 28px auto;
-      padding: 20px;
+      margin: 20px auto;
+      padding: 16px;
     }
     
     header {
@@ -83,27 +83,27 @@
       gap: 16px;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     
     .brand {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: center;
     }
     
     .logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--accent), #4f46e5);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: var(--font-weight-heavy);
-      font-size: 20px;
-      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+      font-size: 18px;
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
       transition: transform 0.3s ease;
     }
     
@@ -113,7 +113,7 @@
     
     h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: var(--font-weight-bold);
       background: linear-gradient(135deg, var(--accent), #4f46e5);
       -webkit-background-clip: text;
@@ -121,19 +121,25 @@
       background-clip: text;
     }
     
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    
     .controls {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
     
     .btn {
       background: var(--card);
       border: 1px solid var(--border);
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: var(--radius-md);
       cursor: pointer;
-      box-shadow: 0 4px 12px var(--shadow);
+      box-shadow: 0 2px 8px var(--shadow);
       transition: all 0.3s ease;
       font-weight: var(--font-weight-medium);
       color: var(--text);
@@ -141,15 +147,16 @@
       align-items: center;
       gap: 6px;
       /* 移动端优化 */
-      min-height: 44px;
-      min-width: 44px;
+      min-height: 40px;
+      min-width: 40px;
+      font-size: 14px;
     }
     
     .btn:hover {
       background: var(--accent);
       color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
     }
     
     .btn:active {
@@ -220,38 +227,40 @@
     
     .topbar {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       margin-top: 16px;
       align-items: center;
+      flex-wrap: wrap;
     }
     
     .timecard {
-      padding: 16px;
+      padding: 14px;
       border-radius: var(--radius-lg);
       background: var(--card);
-      box-shadow: 0 6px 18px var(--shadow);
-      min-width: 240px;
+      box-shadow: 0 4px 12px var(--shadow);
+      min-width: 200px;
       border: 1px solid var(--border);
+      flex: 1;
     }
     
     .timebig {
       font-weight: var(--font-weight-heavy);
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 4px;
       color: var(--text);
     }
     
     .lunar {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
       font-weight: var(--font-weight-normal);
     }
     
     main {
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 24px;
-      margin-top: 24px;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      margin-top: 20px;
     }
     
     .left {
@@ -260,25 +269,25 @@
     
     .noteEditor {
       background: var(--card);
-      padding: 20px;
+      padding: 18px;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
-      box-shadow: 0 6px 18px var(--shadow);
-      margin-bottom: 24px;
+      box-shadow: 0 4px 12px var(--shadow);
+      margin-bottom: 20px;
     }
     
     .noteEditor input,
     .noteEditor textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       background: transparent;
       color: var(--text);
       font-weight: var(--font-weight-normal);
       transition: all 0.3s ease;
-      font-size: 15px;
+      font-size: 14px;
       /* 移动端优化 */
       font-size: 16px; /* 防止iOS缩放 */
     }
@@ -297,53 +306,53 @@
     }
     
     .noteList {
-      margin-top: 14px;
+      margin-top: 12px;
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
     
     .note {
       background: var(--card);
-      padding: 18px;
+      padding: 16px;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
-      box-shadow: 0 4px 12px var(--shadow);
+      box-shadow: 0 2px 8px var(--shadow);
       transition: all 0.3s ease;
     }
     
     .note:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px var(--shadow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow);
     }
     
     .meta {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--muted);
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
       font-weight: var(--font-weight-normal);
     }
     
     .pill {
       background: rgba(0, 0, 0, 0.06);
-      padding: 6px 10px;
-      border-radius: 20px;
-      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 16px;
+      font-size: 11px;
       font-weight: var(--font-weight-medium);
     }
     
     aside {
       position: sticky;
-      top: 22px;
+      top: 20px;
       height: fit-content;
     }
     
     .reminderList {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
+      margin-top: 12px;
     }
     
     .reminderTime {
@@ -378,130 +387,148 @@
     
     footer {
       opacity: 0.8;
-      font-size: 14px;
-      margin-top: 28px;
+      font-size: 13px;
+      margin-top: 24px;
       color: var(--muted);
       font-weight: var(--font-weight-normal);
       text-align: center;
-      padding: 16px;
+      padding: 14px;
     }
     
     /* 移动端优化 - 响应式布局 */
     @media (max-width: 900px) {
       main {
         grid-template-columns: 1fr;
+        gap: 16px;
       }
       aside {
         position: static;
-        order: 1; /* 将侧边栏移到主内容上方 */
+        order: 1;
       }
       .left {
-        order: 2; /* 将左侧内容移到侧边栏下方 */
-      }
-      
-      /* 在小屏幕上优化顶部栏布局 */
-      .topbar {
-        flex-wrap: wrap;
-      }
-      .timecard {
-        min-width: auto;
-        flex: 1;
-      }
-      
-      /* 优化搜索框在小屏幕上的显示 */
-      .search {
-        min-width: auto;
-      }
-      
-      /* 优化控制按钮在小屏幕上的显示 */
-      .controls {
-        flex-wrap: wrap;
-        justify-content: flex-end;
+        order: 2;
       }
     }
     
     /* 在小屏幕上进一步优化布局 */
     @media (max-width: 768px) {
+      .app {
+        padding: 12px;
+        margin: 12px auto;
+      }
+      
       header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px;
+      }
+      
+      .brand {
+        width: 100%;
+        justify-content: flex-start;
       }
       
       .controls {
         width: 100%;
         justify-content: space-between;
+        gap: 8px;
       }
       
       .search {
         order: 1;
         width: 100%;
-        margin-top: 12px;
-      }
-      
-      .app {
-        padding: 16px;
-        margin: 16px auto;
+        margin-top: 8px;
       }
       
       .topbar {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        align-items: stretch;
+        gap: 10px;
       }
       
       .timecard {
         width: 100%;
+        min-width: auto;
       }
       
       /* 移动端优化 - 增加字体大小 */
       body {
-        font-size: 16px;
+        font-size: 15px;
       }
       
       .noteEditor input,
       .noteEditor textarea {
-        font-size: 16px; /* 防止iOS缩放 */
+        font-size: 16px;
       }
       
-      /* 移动端优化 - 按钮间距 */
-      .note .meta {
-        flex-wrap: wrap;
+      /* 移动端控制按钮横向排列 */
+      .mobile-controls-row {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        justify-content: flex-end;
       }
       
-      .note .meta .btn {
+      .mobile-controls-row .btn {
         flex: 1;
-        min-width: 80px;
+        min-width: 60px;
         justify-content: center;
+        font-size: 13px;
+        padding: 6px 10px;
       }
     }
     
     /* 在非常小的屏幕上进一步优化 */
     @media (max-width: 480px) {
+      .app {
+        padding: 10px;
+        margin: 8px auto;
+      }
+      
       .brand {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .logo {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+      }
+      
+      h1 {
+        font-size: 16px;
+      }
+      
+      .brand-subtitle {
+        font-size: 11px;
       }
       
       .controls {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        align-items: stretch;
+        gap: 6px;
       }
       
-      .user-menu {
-        align-self: flex-end;
+      .mobile-controls-row {
+        gap: 6px;
+      }
+      
+      .mobile-controls-row .btn {
+        min-width: 50px;
+        font-size: 12px;
+        padding: 5px 8px;
       }
       
       .note .meta {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: 6px;
       }
       
       .note .meta .pill {
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
       
       /* 移动端优化 - 底部操作栏 */
@@ -514,24 +541,25 @@
         border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-around;
-        padding: 8px 0;
+        padding: 6px 0;
         z-index: 100;
       }
       
       .mobile-bottom-nav .btn {
         flex-direction: column;
-        font-size: 12px;
-        padding: 8px;
-        gap: 4px;
+        font-size: 11px;
+        padding: 6px;
+        gap: 3px;
+        min-height: 50px;
       }
       
       /* 为移动端底部导航添加空间 */
       body {
-        padding-bottom: 70px;
+        padding-bottom: 60px;
       }
       
       .app {
-        margin-bottom: 70px;
+        margin-bottom: 60px;
       }
     }
     
@@ -567,8 +595,8 @@
     .reminder-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px;
       border-radius: var(--radius-md);
       background: rgba(0, 0, 0, 0.04);
       border: 1px solid var(--border);
@@ -576,8 +604,8 @@
     }
     
     .reminder-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--shadow);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow);
     }
     
     .reminder-item.alert {
@@ -586,8 +614,8 @@
     }
     
     .reminder-indicator {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--accent);
     }
@@ -599,14 +627,14 @@
     
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 16px;
       color: var(--muted);
     }
     
     .empty-state svg {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 16px;
+      width: 50px;
+      height: 50px;
+      margin-bottom: 12px;
       opacity: 0.5;
     }
     
@@ -616,35 +644,35 @@
     
     .import-export {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
+      margin-top: 8px;
     }
     
     .stats {
       display: flex;
-      gap: 12px;
-      margin-top: 16px;
+      gap: 10px;
+      margin-top: 14px;
     }
     
     .stat {
       flex: 1;
       text-align: center;
-      padding: 12px;
+      padding: 10px;
       background: var(--card);
       border-radius: var(--radius-md);
       border: 1px solid var(--border);
     }
     
     .stat-value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: var(--font-weight-bold);
       color: var(--accent);
     }
     
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      margin-top: 4px;
+      margin-top: 3px;
     }
     
     .modal {
@@ -659,16 +687,16 @@
       align-items: center;
       justify-content: center;
       /* 移动端优化 */
-      padding: 16px;
+      padding: 12px;
     }
     
     .modal-content {
       background: var(--card);
-      padding: 24px;
+      padding: 20px;
       border-radius: var(--radius-lg);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       width: 90%;
-      max-width: 500px;
+      max-width: 400px;
       border: 1px solid var(--border);
       /* 移动端优化 */
       max-height: 90vh;
@@ -679,50 +707,51 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     
     .modal-title {
       font-weight: var(--font-weight-bold);
-      font-size: 18px;
+      font-size: 16px;
       color: var(--text);
     }
     
     .close-modal {
       background: none;
       border: none;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
       color: var(--muted);
       /* 移动端优化 */
-      min-width: 44px;
-      min-height: 44px;
+      min-width: 40px;
+      min-height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     
     .form-group label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       font-weight: var(--font-weight-medium);
       color: var(--text);
+      font-size: 14px;
     }
     
     .form-control {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border);
       background: transparent;
       color: var(--text);
-      font-size: 15px;
+      font-size: 14px;
       /* 移动端优化 */
-      font-size: 16px; /* 防止iOS缩放 */
+      font-size: 16px;
     }
     
     .form-control:focus {
@@ -744,16 +773,16 @@
       align-items: center;
       justify-content: center;
       /* 移动端优化 */
-      padding: 16px;
+      padding: 12px;
     }
     
     .auth-container {
       background: var(--card);
-      padding: 32px;
+      padding: 24px;
       border-radius: var(--radius-lg);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       width: 90%;
-      max-width: 400px;
+      max-width: 360px;
       border: 1px solid var(--border);
       /* 移动端优化 */
       max-height: 90vh;
@@ -762,47 +791,47 @@
     
     .auth-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     
     .auth-logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
       background: linear-gradient(135deg, var(--accent), #4f46e5);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: var(--font-weight-heavy);
-      font-size: 28px;
-      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
-      margin: 0 auto 16px;
+      font-size: 24px;
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+      margin: 0 auto 14px;
     }
     
     .auth-title {
       font-weight: var(--font-weight-bold);
-      font-size: 24px;
-      margin-bottom: 8px;
+      font-size: 20px;
+      margin-bottom: 6px;
       color: var(--text);
     }
     
     .auth-subtitle {
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .auth-tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
+      gap: 6px;
+      margin-bottom: 20px;
       border-bottom: 1px solid var(--border);
     }
     
     .auth-tab {
       flex: 1;
       text-align: center;
-      padding: 12px;
+      padding: 10px;
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
@@ -811,7 +840,8 @@
       color: var(--muted);
       transition: all 0.3s ease;
       /* 移动端优化 */
-      min-height: 44px;
+      min-height: 40px;
+      font-size: 14px;
     }
     
     .auth-tab.active {
@@ -829,11 +859,11 @@
     
     .auth-footer {
       text-align: center;
-      margin-top: 24px;
-      padding-top: 16px;
+      margin-top: 20px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
       color: var(--muted);
-      font-size: 14px;
+      font-size: 12px;
     }
     
     .auth-footer a {
@@ -851,8 +881,8 @@
     }
     
     .user-avatar {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--accent), #4f46e5);
       display: flex;
@@ -862,8 +892,9 @@
       font-weight: var(--font-weight-bold);
       cursor: pointer;
       /* 移动端优化 */
-      min-width: 44px;
-      min-height: 44px;
+      min-width: 40px;
+      min-height: 40px;
+      font-size: 14px;
     }
     
     .user-dropdown {
@@ -872,10 +903,10 @@
       right: 0;
       background: var(--card);
       border-radius: var(--radius-md);
-      box-shadow: 0 8px 24px var(--shadow);
+      box-shadow: 0 6px 20px var(--shadow);
       border: 1px solid var(--border);
-      padding: 8px;
-      min-width: 180px;
+      padding: 6px;
+      min-width: 160px;
       z-index: 100;
       display: none;
     }
@@ -887,15 +918,16 @@
     .user-dropdown-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
+      gap: 6px;
+      padding: 8px 10px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: all 0.3s ease;
       color: var(--text);
       text-decoration: none;
       /* 移动端优化 */
-      min-height: 44px;
+      min-height: 40px;
+      font-size: 14px;
     }
     
     .user-dropdown-item:hover {
@@ -913,14 +945,14 @@
     .sync-status {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
+      gap: 6px;
+      font-size: 11px;
       color: var(--muted);
     }
     
     .sync-indicator {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--success);
     }
@@ -942,14 +974,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 40px;
+      padding: 30px;
     }
     
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(124, 58, 237, 0.1);
-      border-left: 4px solid var(--accent);
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(124, 58, 237, 0.1);
+      border-left: 3px solid var(--accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -963,16 +995,16 @@
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.2);
       color: var(--danger);
-      padding: 12px;
+      padding: 10px;
       border-radius: var(--radius-md);
-      margin-bottom: 16px;
-      font-size: 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
     }
     
     .auth-optional {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 16px;
+      right: 16px;
     }
     
     /* 移动端优化 - 底部导航栏 */
@@ -990,56 +1022,57 @@
         background: var(--card);
         border-top: 1px solid var(--border);
         justify-content: space-around;
-        padding: 8px 0;
+        padding: 5px 0;
         z-index: 100;
-        box-shadow: 0 -4px 12px var(--shadow);
+        box-shadow: 0 -2px 8px var(--shadow);
       }
       
       .mobile-bottom-nav .btn {
         flex-direction: column;
-        font-size: 12px;
-        padding: 8px;
-        gap: 4px;
+        font-size: 10px;
+        padding: 5px;
+        gap: 2px;
         flex: 1;
-        max-width: 80px;
+        max-width: 70px;
         justify-content: center;
         align-items: center;
+        min-height: 45px;
       }
       
       /* 为移动端底部导航添加空间 */
       body {
-        padding-bottom: 70px;
+        padding-bottom: 55px;
       }
       
       .app {
-        margin-bottom: 70px;
+        margin-bottom: 55px;
       }
     }
 
     /* 新增样式：横向按钮布局 */
     .note-actions {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 6px;
+      margin-top: 10px;
       flex-wrap: wrap;
       align-items: center;
     }
     
     .note-actions .btn {
-      padding: 8px 12px;
-      font-size: 12px;
-      min-height: 36px;
+      padding: 6px 10px;
+      font-size: 11px;
+      min-height: 32px;
       min-width: auto;
       flex: 1;
-      max-width: 120px;
+      max-width: 100px;
       justify-content: center;
     }
     
     .note-meta {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 6px;
       flex-wrap: wrap;
     }
     
@@ -1047,22 +1080,22 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .note-content {
-      margin-top: 8px;
+      margin-top: 6px;
       color: var(--text-secondary);
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.4;
     }
     
     .reminder-badge {
       background: rgba(124, 58, 237, 0.1);
       color: var(--accent);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 10px;
       font-weight: var(--font-weight-medium);
     }
     
@@ -1075,23 +1108,50 @@
     .id-badge {
       background: rgba(0, 0, 0, 0.05);
       color: var(--muted);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 10px;
       font-family: monospace;
     }
     
     .completed-section {
-      margin-top: 24px;
-      padding-top: 16px;
+      margin-top: 20px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
     }
     
     .section-title {
       font-weight: var(--font-weight-bold);
-      font-size: 16px;
-      margin-bottom: 12px;
+      font-size: 14px;
+      margin-bottom: 10px;
       color: var(--text);
+    }
+    
+    /* 移动端搜索框优化 */
+    .search-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--card);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px var(--shadow);
+      width: 100%;
+    }
+    
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      color: var(--text);
+      min-height: 36px;
+    }
+    
+    .search-input::placeholder {
+      color: var(--muted);
     }
   </style>
 </head>
@@ -1173,34 +1233,54 @@
         <div class="logo">笔</div>
         <div>
           <h1 data-t="title">Simple Notebook</h1>
-          <div style="font-size:14px;color:var(--muted)" data-t="subtitle">Cloud Sync · Lightweight · Search · Reminders</div>
+          <div class="brand-subtitle" data-t="subtitle">Cloud Sync · Lightweight · Search · Reminders</div>
         </div>
       </div>
       <div class="controls">
-        <div class="search btn" style="min-width:280px;display:flex;align-items:center;">
-          <input id="q" placeholder="Search notes" style="flex:1;border:0;background:transparent;outline:none;font-size:14px;color:var(--text)" />
+        <div class="search search-container">
+          <input id="q" class="search-input" placeholder="Search notes" />
           <button class="btn" id="clear">Clear</button>
         </div>
-        <div class="sync-status" id="syncStatus">
+        <div class="sync-status desktop-only" id="syncStatus">
           <div class="sync-indicator local" id="syncIndicator"></div>
           <span id="syncText" data-t="local">Local</span>
         </div>
-        <div class="user-menu">
-          <div class="user-avatar" id="userAvatar">?</div>
-          <div class="user-dropdown" id="userDropdown">
-            <div class="user-dropdown-item" id="loginLink">
-              <span data-t="login">Login for Cloud Sync</span>
-            </div>
-            <div class="user-dropdown-item" id="exportLink">
-              <span data-t="exportData">Export Data</span>
-            </div>
-            <div class="user-dropdown-item" id="importLink">
-              <span data-t="importData">Import Data</span>
+        <div class="mobile-controls-row mobile-only">
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-item" id="loginLink">
+                <span data-t="login">Login for Cloud Sync</span>
+              </div>
+              <div class="user-dropdown-item" id="exportLink">
+                <span data-t="exportData">Export Data</span>
+              </div>
+              <div class="user-dropdown-item" id="importLink">
+                <span data-t="importData">Import Data</span>
+              </div>
             </div>
           </div>
+          <div class="btn" id="lang">中文</div>
+          <div class="btn" id="theme">🌙</div>
         </div>
-        <div class="btn" id="lang">中文</div>
-        <div class="btn" id="theme">🌙</div>
+        <div class="desktop-only">
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatarDesktop">?</div>
+            <div class="user-dropdown" id="userDropdownDesktop">
+              <div class="user-dropdown-item" id="loginLinkDesktop">
+                <span data-t="login">Login for Cloud Sync</span>
+              </div>
+              <div class="user-dropdown-item" id="exportLinkDesktop">
+                <span data-t="exportData">Export Data</span>
+              </div>
+              <div class="user-dropdown-item" id="importLinkDesktop">
+                <span data-t="importData">Import Data</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn" id="langDesktop">中文</div>
+          <div class="btn" id="themeDesktop">🌙</div>
+        </div>
       </div>
     </header>
     <div class="topbar">
@@ -1209,7 +1289,7 @@
         <div class="lunar" id="lunar">Lunar: --</div>
       </div>
       <div style="flex:1"></div>
-      <div style="display:flex;gap:10px;align-items:center">
+      <div style="display:flex;gap:8px;align-items:center">
         <div class="btn" id="newNote">New Note</div>
         <div class="btn" id="syncNow" style="display:none">Sync Now</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
@@ -1219,12 +1299,12 @@
       <section class="left">
         <div class="noteEditor" id="editor">
           <input id="title" placeholder="Title" />
-          <textarea id="content" rows="6" placeholder="Write something..."></textarea>
-          <div style="display:flex;gap:10px;align-items:center">
-            <input id="remindAt" type="datetime-local" style="padding:10px;border-radius:var(--radius-md);border:1px solid var(--border);background:transparent;color:var(--text)" />
+          <textarea id="content" rows="5" placeholder="Write something..."></textarea>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input id="remindAt" type="datetime-local" style="padding:8px;border-radius:var(--radius-md);border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;flex:1;min-width:200px" />
             <button class="btn" id="save">Save</button>
             <div style="flex:1"></div>
-            <div style="font-size:13px;color:var(--muted)" data-t="help">Each note stores creation date. Set reminders.</div>
+            <div style="font-size:12px;color:var(--muted)" data-t="help">Each note stores creation date. Set reminders.</div>
           </div>
         </div>
         <div class="stats">
@@ -1249,14 +1329,14 @@
         </div>
       </section>
       <aside>
-        <div style="background:var(--card);padding:16px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 4px 12px var(--shadow)">
-          <div style="font-weight:700;font-size:16px;margin-bottom:8px" data-t="remindersTitle">Reminders</div>
+        <div style="background:var(--card);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)">
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px" data-t="remindersTitle">Reminders</div>
           <div class="reminderList" id="reminders"></div>
         </div>
-        <div style="background:var(--card);padding:16px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 4px 12px var(--shadow);margin-top:16px">
-          <div style="font-weight:700;font-size:16px;margin-bottom:8px" data-t="infoTitle">Info</div>
-          <div style="color:var(--muted);font-size:14px;margin-top:8px" id="storageInfo" data-t="localStorageInfo">Your notes are stored locally in your browser.</div>
-          <div style="color:var(--muted);font-size:12px;margin-top:8px;padding:8px;background:rgba(0,0,0,0.05);border-radius:var(--radius-md)">
+        <div style="background:var(--card);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow);margin-top:12px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px" data-t="infoTitle">Info</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px" id="storageInfo" data-t="localStorageInfo">Your notes are stored locally in your browser.</div>
+          <div style="color:var(--muted);font-size:11px;margin-top:6px;padding:6px;background:rgba(0,0,0,0.05);border-radius:var(--radius-md)">
             💡 <span data-t="notificationTip">Tip: First time setting a reminder will request notification permission, please allow browser to send desktop notifications</span>
           </div>
         </div>
@@ -1296,7 +1376,7 @@
         <label for="reminderDateTime" data-t="reminderTimeLabel">Reminder Time</label>
         <input type="datetime-local" id="reminderDateTime" class="form-control">
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
+      <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn" id="cancelReminder" data-t="cancel">Cancel</button>
         <button class="btn" id="saveReminder" data-t="saveReminder">Save Reminder</button>
       </div>
@@ -1316,9 +1396,9 @@
       </div>
       <div class="form-group">
         <label for="editContent" data-t="contentLabel">Content</label>
-        <textarea id="editContent" rows="6" class="form-control"></textarea>
+        <textarea id="editContent" rows="5" class="form-control"></textarea>
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
+      <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn" id="cancelEdit" data-t="cancel">Cancel</button>
         <button class="btn btn-success" id="saveEdit" data-t="saveEdit">Save Changes</button>
       </div>
@@ -1372,6 +1452,8 @@
       elements.registerBtn = document.getElementById('registerBtn');
       elements.userAvatar = document.getElementById('userAvatar');
       elements.userDropdown = document.getElementById('userDropdown');
+      elements.userAvatarDesktop = document.getElementById('userAvatarDesktop');
+      elements.userDropdownDesktop = document.getElementById('userDropdownDesktop');
       elements.syncStatus = document.getElementById('syncStatus');
       elements.syncIndicator = document.getElementById('syncIndicator');
       elements.syncText = document.getElementById('syncText');
@@ -1396,6 +1478,8 @@
       elements.clear = document.getElementById('clear');
       elements.lang = document.getElementById('lang');
       elements.theme = document.getElementById('theme');
+      elements.langDesktop = document.getElementById('langDesktop');
+      elements.themeDesktop = document.getElementById('themeDesktop');
       
       // 时间显示元素
       elements.datetime = document.getElementById('datetime');
@@ -1654,59 +1738,106 @@
     }
 
     function updateUserUI() {
-      if (!elements.userDropdown || !elements.userAvatar) return;
-      
-      if (currentUser) {
-        elements.userAvatar.textContent = currentUser.displayName ? 
-          currentUser.displayName.charAt(0).toUpperCase() : 
-          currentUser.email.charAt(0).toUpperCase();
-        
-        elements.userDropdown.innerHTML = `
-          <div class="user-dropdown-item" id="profileLink">
-            <span>${currentUser.displayName || currentUser.email}</span>
-          </div>
-          <div class="user-dropdown-item" id="exportLink">
-            <span data-t="exportData">Export Data</span>
-          </div>
-          <div class="user-dropdown-item danger" id="logoutLink">
-            <span data-t="logout">Logout</span>
-          </div>
-        `;
-        
-        // 安全绑定事件
-        setTimeout(() => {
-          const logoutLink = document.getElementById('logoutLink');
-          if (logoutLink) logoutLink.addEventListener('click', logout);
-        }, 0);
-      } else {
-        elements.userAvatar.textContent = '?';
-        elements.userDropdown.innerHTML = `
-          <div class="user-dropdown-item" id="loginLink">
-            <span data-t="login">Login for Cloud Sync</span>
-          </div>
-          <div class="user-dropdown-item" id="exportLink">
-            <span data-t="exportData">Export Data</span>
-          </div>
-          <div class="user-dropdown-item" id="importLink">
-            <span data-t="importData">Import Data</span>
-          </div>
-        `;
-        
-        // 安全绑定事件
-        setTimeout(() => {
-          const loginLink = document.getElementById('loginLink');
-          if (loginLink) loginLink.addEventListener('click', showAuthModal);
-        }, 0);
+      // 更新移动端用户界面
+      if (elements.userAvatar && elements.userDropdown) {
+        if (currentUser) {
+          elements.userAvatar.textContent = currentUser.displayName ? 
+            currentUser.displayName.charAt(0).toUpperCase() : 
+            currentUser.email.charAt(0).toUpperCase();
+          
+          elements.userDropdown.innerHTML = `
+            <div class="user-dropdown-item" id="profileLink">
+              <span>${currentUser.displayName || currentUser.email}</span>
+            </div>
+            <div class="user-dropdown-item" id="exportLink">
+              <span data-t="exportData">Export Data</span>
+            </div>
+            <div class="user-dropdown-item danger" id="logoutLink">
+              <span data-t="logout">Logout</span>
+            </div>
+          `;
+        } else {
+          elements.userAvatar.textContent = '?';
+          elements.userDropdown.innerHTML = `
+            <div class="user-dropdown-item" id="loginLink">
+              <span data-t="login">Login for Cloud Sync</span>
+            </div>
+            <div class="user-dropdown-item" id="exportLink">
+              <span data-t="exportData">Export Data</span>
+            </div>
+            <div class="user-dropdown-item" id="importLink">
+              <span data-t="importData">Import Data</span>
+            </div>
+          `;
+        }
       }
       
-      // 安全绑定导出导入事件
+      // 更新桌面端用户界面
+      if (elements.userAvatarDesktop && elements.userDropdownDesktop) {
+        if (currentUser) {
+          elements.userAvatarDesktop.textContent = currentUser.displayName ? 
+            currentUser.displayName.charAt(0).toUpperCase() : 
+            currentUser.email.charAt(0).toUpperCase();
+          
+          elements.userDropdownDesktop.innerHTML = `
+            <div class="user-dropdown-item" id="profileLinkDesktop">
+              <span>${currentUser.displayName || currentUser.email}</span>
+            </div>
+            <div class="user-dropdown-item" id="exportLinkDesktop">
+              <span data-t="exportData">Export Data</span>
+            </div>
+            <div class="user-dropdown-item danger" id="logoutLinkDesktop">
+              <span data-t="logout">Logout</span>
+            </div>
+          `;
+        } else {
+          elements.userAvatarDesktop.textContent = '?';
+          elements.userDropdownDesktop.innerHTML = `
+            <div class="user-dropdown-item" id="loginLinkDesktop">
+              <span data-t="login">Login for Cloud Sync</span>
+            </div>
+            <div class="user-dropdown-item" id="exportLinkDesktop">
+              <span data-t="exportData">Export Data</span>
+            </div>
+            <div class="user-dropdown-item" id="importLinkDesktop">
+              <span data-t="importData">Import Data</span>
+            </div>
+          `;
+        }
+      }
+      
+      // 安全绑定事件
       setTimeout(() => {
+        // 移动端事件绑定
+        const loginLink = document.getElementById('loginLink');
+        if (loginLink) loginLink.addEventListener('click', showAuthModal);
+        
+        const logoutLink = document.getElementById('logoutLink');
+        if (logoutLink) logoutLink.addEventListener('click', logout);
+        
         const exportLink = document.getElementById('exportLink');
         if (exportLink) exportLink.addEventListener('click', exportAllNotes);
         
         const importLink = document.getElementById('importLink');
         if (importLink) {
           importLink.addEventListener('click', () => {
+            if (elements.fileInput) elements.fileInput.click();
+          });
+        }
+        
+        // 桌面端事件绑定
+        const loginLinkDesktop = document.getElementById('loginLinkDesktop');
+        if (loginLinkDesktop) loginLinkDesktop.addEventListener('click', showAuthModal);
+        
+        const logoutLinkDesktop = document.getElementById('logoutLinkDesktop');
+        if (logoutLinkDesktop) logoutLinkDesktop.addEventListener('click', logout);
+        
+        const exportLinkDesktop = document.getElementById('exportLinkDesktop');
+        if (exportLinkDesktop) exportLinkDesktop.addEventListener('click', exportAllNotes);
+        
+        const importLinkDesktop = document.getElementById('importLinkDesktop');
+        if (importLinkDesktop) {
+          importLinkDesktop.addEventListener('click', () => {
             if (elements.fileInput) elements.fileInput.click();
           });
         }
@@ -2271,7 +2402,7 @@
         
         el.innerHTML = `
           <div class="note-header">
-            <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
+            <div class="note-title" style="font-weight:700;font-size:15px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
               <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
@@ -2341,7 +2472,7 @@
         
         el.innerHTML = `
           <div class="note-header">
-            <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
+            <div class="note-title" style="font-weight:700;font-size:15px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
               <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
@@ -2389,7 +2520,7 @@
       const pack = currentLang === 'cn' ? UI.cn : UI.en;
       
       if (upcoming.length === 0) {
-        elements.reminders.innerHTML = `<div style="color:var(--muted);text-align:center;padding:20px">${pack.noReminders}</div>`;
+        elements.reminders.innerHTML = `<div style="color:var(--muted);text-align:center;padding:16px">${pack.noReminders}</div>`;
         return;
       }
       
@@ -2403,10 +2534,10 @@
         el.innerHTML = `
           <div class="reminder-indicator ${isAlert ? 'alert' : ''}"></div>
           <div style="flex:1">
-            <div style="font-weight:600;font-size:14px">${escapeHtml(n.title)}</div>
-            <div class="${isAlert ? 'reminderAlert' : 'reminderTime'}" style="font-size:12px">${when.toLocaleString()}</div>
+            <div style="font-weight:600;font-size:13px">${escapeHtml(n.title)}</div>
+            <div class="${isAlert ? 'reminderAlert' : 'reminderTime'}" style="font-size:11px">${when.toLocaleString()}</div>
           </div>
-          <button class="btn btn-danger" data-action="delete-reminder" data-id="${n.id}" style="padding:6px;font-size:12px">
+          <button class="btn btn-danger" data-action="delete-reminder" data-id="${n.id}" style="padding:5px;font-size:11px">
             ${pack.delete}
           </button>
         `;
@@ -2459,6 +2590,10 @@
       if (elements.content) elements.content.placeholder = pack.contentPlaceholder;
       if (elements.q) elements.q.placeholder = pack.searchPlaceholder;
       
+      // 更新语言切换按钮文本
+      if (elements.lang) elements.lang.textContent = currentLang === 'cn' ? 'EN' : '中文';
+      if (elements.langDesktop) elements.langDesktop.textContent = currentLang === 'cn' ? 'EN' : '中文';
+      
       // 更新同步状态
       setSyncStatus(isUsingCloud ? 'synced' : 'local');
     }
@@ -2467,6 +2602,7 @@
       document.documentElement.setAttribute('data-theme', theme);
       if (elements.app) elements.app.setAttribute('data-theme', theme);
       if (elements.theme) elements.theme.textContent = theme === 'dark' ? '☀️' : '🌙';
+      if (elements.themeDesktop) elements.themeDesktop.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
     // 时间更新函数
@@ -2700,6 +2836,37 @@
       }
     }
 
+    // 设置用户菜单事件
+    function setupUserMenuEvents() {
+      // 移动端用户菜单
+      if (elements.userAvatar) {
+        elements.userAvatar.addEventListener('click', () => {
+          if (elements.userDropdown) {
+            elements.userDropdown.classList.toggle('active');
+          }
+        });
+      }
+      
+      // 桌面端用户菜单
+      if (elements.userAvatarDesktop) {
+        elements.userAvatarDesktop.addEventListener('click', () => {
+          if (elements.userDropdownDesktop) {
+            elements.userDropdownDesktop.classList.toggle('active');
+          }
+        });
+      }
+      
+      // 关闭下拉菜单当点击外部
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-menu') && elements.userDropdown) {
+          elements.userDropdown.classList.remove('active');
+        }
+        if (!e.target.closest('.user-menu') && elements.userDropdownDesktop) {
+          elements.userDropdownDesktop.classList.remove('active');
+        }
+      });
+    }
+
     // 模态框功能
     function openReminderModal(noteId) {
       currentNoteId = noteId;
@@ -2758,6 +2925,7 @@
         setupNoteEvents();
         setupModalEvents();
         setupMobileEvents();
+        setupUserMenuEvents();
         
         // 设置其他事件
         if (elements.save) {
@@ -2795,21 +2963,6 @@
           });
         }
 
-        if (elements.userAvatar) {
-          elements.userAvatar.addEventListener('click', () => {
-            if (elements.userDropdown) {
-              elements.userDropdown.classList.toggle('active');
-            }
-          });
-        }
-
-        // 关闭下拉菜单当点击外部
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.user-menu') && elements.userDropdown) {
-            elements.userDropdown.classList.remove('active');
-          }
-        });
-
         // 搜索功能
         if (elements.q) {
           elements.q.addEventListener('input', () => {
@@ -2837,10 +2990,28 @@
             renderReminders();
           });
         }
+        
+        if (elements.langDesktop) {
+          elements.langDesktop.addEventListener('click', () => {
+            currentLang = currentLang === 'cn' ? 'en' : 'cn';
+            if (elements.app) elements.app.setAttribute('data-lang', currentLang);
+            applyLang();
+            renderNotes(elements.q ? elements.q.value : '');
+            renderCompletedNotes(elements.q ? elements.q.value : '');
+            renderReminders();
+          });
+        }
 
         // 主题切换
         if (elements.theme) {
           elements.theme.addEventListener('click', () => {
+            theme = theme === 'dark' ? 'light' : 'dark';
+            applyTheme();
+          });
+        }
+        
+        if (elements.themeDesktop) {
+          elements.themeDesktop.addEventListener('click', () => {
             theme = theme === 'dark' ? 'light' : 'dark';
             applyTheme();
           });
