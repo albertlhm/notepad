@@ -504,37 +504,6 @@
       .note .meta .pill {
         margin-bottom: 2px;
       }
-      
-      /* 移动端优化 - 底部操作栏 */
-      .mobile-bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--card);
-        border-top: 1px solid var(--border);
-        display: flex;
-        justify-content: space-around;
-        padding: 6px 0;
-        z-index: 100;
-      }
-      
-      .mobile-bottom-nav .btn {
-        flex-direction: column;
-        font-size: 11px;
-        padding: 6px;
-        gap: 3px;
-        min-height: 50px;
-      }
-      
-      /* 为移动端底部导航添加空间 */
-      body {
-        padding-bottom: 60px;
-      }
-      
-      .app {
-        margin-bottom: 60px;
-      }
     }
     
     /* 移动端优化 - 隐藏桌面元素 */
@@ -981,48 +950,6 @@
       right: 16px;
     }
     
-    /* 移动端优化 - 底部导航栏 */
-    .mobile-bottom-nav {
-      display: none;
-    }
-    
-    @media (max-width: 480px) {
-      .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--card);
-        border-top: 1px solid var(--border);
-        justify-content: space-around;
-        padding: 5px 0;
-        z-index: 100;
-        box-shadow: 0 -2px 8px var(--shadow);
-      }
-      
-      .mobile-bottom-nav .btn {
-        flex-direction: column;
-        font-size: 10px;
-        padding: 5px;
-        gap: 2px;
-        flex: 1;
-        max-width: 70px;
-        justify-content: center;
-        align-items: center;
-        min-height: 45px;
-      }
-      
-      /* 为移动端底部导航添加空间 */
-      body {
-        padding-bottom: 55px;
-      }
-      
-      .app {
-        margin-bottom: 55px;
-      }
-    }
-
     /* 新增样式：横向按钮布局 */
     .note-actions {
       display: flex;
@@ -1146,61 +1073,6 @@
       white-space: nowrap;
     }
     
-    /* 移动端优化布局 */
-    .mobile-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-    }
-    
-    .mobile-controls-top {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-    }
-    
-    .mobile-controls-top .search-container {
-      flex: 1;
-    }
-    
-    .mobile-controls-top .user-menu {
-      display: flex;
-      align-items: center;
-    }
-    
-    .mobile-controls-bottom {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-    
-    .mobile-controls-bottom .btn {
-      min-width: 44px;
-      justify-content: center;
-      padding: 8px;
-    }
-    
-    .mobile-controls-bottom .btn span:last-child {
-      display: none;
-    }
-    
-    /* 移动端用户头像样式 */
-    .mobile-user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), #4f46e5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: var(--font-weight-bold);
-      cursor: pointer;
-      min-width: 36px;
-      min-height: 36px;
-    }
-    
     /* 移动端单行控制栏 */
     .mobile-single-row {
       display: flex;
@@ -1211,6 +1083,7 @@
     
     .mobile-single-row .search-container {
       flex: 1;
+      max-width: 180px; /* 缩短搜索框 */
     }
     
     .mobile-single-row .user-menu {
@@ -1231,6 +1104,37 @@
     
     .mobile-single-row .control-buttons .btn span:last-child {
       display: none;
+    }
+    
+    /* 移动端用户头像样式 */
+    .mobile-user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      min-width: 36px;
+      min-height: 36px;
+    }
+    
+    /* 移动端清除按钮图标 */
+    .mobile-clear-btn {
+      min-width: 36px !important;
+      padding: 8px !important;
+      justify-content: center;
+    }
+    
+    .mobile-clear-btn span:first-child {
+      display: block !important;
+    }
+    
+    .mobile-clear-btn span:last-child {
+      display: none !important;
     }
   </style>
 </head>
@@ -1349,7 +1253,7 @@
         <div class="mobile-single-row mobile-only">
           <div class="search-container">
             <input id="qMobile" class="search-input" placeholder="Search notes" />
-            <button class="btn" id="clearMobile">Clear</button>
+            <button class="btn mobile-clear-btn" id="clearMobile">❌</button>
           </div>
           <div class="user-menu">
             <div class="mobile-user-avatar" id="userAvatar">?</div>
@@ -1379,8 +1283,8 @@
       </div>
       <div style="flex:1"></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div class="btn mobile-only" id="mobileNewNote">New Note</div>
-        <div class="btn" id="syncNow" style="display:none">Sync Now</div>
+        <!-- 移动端不显示New Note按钮 -->
+        <div class="btn desktop-only" id="syncNow" style="display:none">Sync Now</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
       </div>
     </div>
@@ -1432,26 +1336,6 @@
       </aside>
     </main>
     <footer data-t="footer">Simple Notebook — Use locally or login for cloud sync · Beautiful UI · Supports English/Chinese</footer>
-  </div>
-
-  <!-- 移动端底部导航 -->
-  <div class="mobile-bottom-nav mobile-only">
-    <button class="btn" id="mobileNewNoteBottom">
-      <span>📝</span>
-      <span>New</span>
-    </button>
-    <button class="btn" id="mobileSearchBottom">
-      <span>🔍</span>
-      <span>Search</span>
-    </button>
-    <button class="btn" id="mobileReminders">
-      <span>⏰</span>
-      <span>Reminders</span>
-    </button>
-    <button class="btn" id="mobileMenu">
-      <span>☰</span>
-      <span>Menu</span>
-    </button>
   </div>
 
   <!-- 设置提醒模态框 -->
@@ -1598,13 +1482,6 @@
       elements.totalNotes = document.getElementById('totalNotes');
       elements.activeReminders = document.getElementById('activeReminders');
       elements.completedNotes = document.getElementById('completedNotes');
-      
-      // 移动端元素
-      elements.mobileNewNote = document.getElementById('mobileNewNote');
-      elements.mobileNewNoteBottom = document.getElementById('mobileNewNoteBottom');
-      elements.mobileSearchBottom = document.getElementById('mobileSearchBottom');
-      elements.mobileReminders = document.getElementById('mobileReminders');
-      elements.mobileMenu = document.getElementById('mobileMenu');
     }
 
     // UI文本
@@ -2677,7 +2554,6 @@
       if (elements.newNote) elements.newNote.textContent = pack.newNote;
       if (elements.save) elements.save.textContent = pack.save;
       if (elements.clear) elements.clear.textContent = pack.clear;
-      if (elements.clearMobile) elements.clearMobile.textContent = pack.clear;
       if (elements.syncNow) elements.syncNow.textContent = pack.syncNow;
       
       // 更新占位符
@@ -2873,50 +2749,34 @@
 
     // 设置移动端事件
     function setupMobileEvents() {
-      // 移动端新建笔记
-      if (elements.mobileNewNote) {
-        elements.mobileNewNote.addEventListener('click', () => {
-          if (elements.title) {
-            elements.title.focus();
-            // 平滑滚动到编辑器
-            elements.editor.scrollIntoView({ behavior: 'smooth' });
-          }
+      // 搜索功能
+      if (elements.q) {
+        elements.q.addEventListener('input', () => {
+          renderNotes(elements.q.value);
+          renderCompletedNotes(elements.q.value);
         });
       }
       
-      if (elements.mobileNewNoteBottom) {
-        elements.mobileNewNoteBottom.addEventListener('click', () => {
-          if (elements.title) {
-            elements.title.focus();
-            // 平滑滚动到编辑器
-            elements.editor.scrollIntoView({ behavior: 'smooth' });
-          }
+      if (elements.qMobile) {
+        elements.qMobile.addEventListener('input', () => {
+          renderNotes(elements.qMobile.value);
+          renderCompletedNotes(elements.qMobile.value);
         });
       }
       
-      // 移动端搜索
-      if (elements.mobileSearchBottom) {
-        elements.mobileSearchBottom.addEventListener('click', () => {
-          if (elements.qMobile) {
-            elements.qMobile.focus();
-          }
+      if (elements.clear) {
+        elements.clear.addEventListener('click', () => {
+          if (elements.q) elements.q.value = '';
+          renderNotes();
+          renderCompletedNotes();
         });
       }
       
-      // 移动端提醒
-      if (elements.mobileReminders) {
-        elements.mobileReminders.addEventListener('click', () => {
-          // 平滑滚动到提醒区域
-          document.querySelector('aside').scrollIntoView({ behavior: 'smooth' });
-        });
-      }
-      
-      // 移动端菜单
-      if (elements.mobileMenu) {
-        elements.mobileMenu.addEventListener('click', () => {
-          if (elements.userDropdown) {
-            elements.userDropdown.classList.toggle('active');
-          }
+      if (elements.clearMobile) {
+        elements.clearMobile.addEventListener('click', () => {
+          if (elements.qMobile) elements.qMobile.value = '';
+          renderNotes();
+          renderCompletedNotes();
         });
       }
     }
@@ -3065,37 +2925,6 @@
             if (currentUser && isUsingCloud) {
               loadCloudNotes();
             }
-          });
-        }
-
-        // 搜索功能
-        if (elements.q) {
-          elements.q.addEventListener('input', () => {
-            renderNotes(elements.q.value);
-            renderCompletedNotes(elements.q.value);
-          });
-        }
-        
-        if (elements.qMobile) {
-          elements.qMobile.addEventListener('input', () => {
-            renderNotes(elements.qMobile.value);
-            renderCompletedNotes(elements.qMobile.value);
-          });
-        }
-        
-        if (elements.clear) {
-          elements.clear.addEventListener('click', () => {
-            if (elements.q) elements.q.value = '';
-            renderNotes();
-            renderCompletedNotes();
-          });
-        }
-        
-        if (elements.clearMobile) {
-          elements.clearMobile.addEventListener('click', () => {
-            if (elements.qMobile) elements.qMobile.value = '';
-            renderNotes();
-            renderCompletedNotes();
           });
         }
 
