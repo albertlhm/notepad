@@ -1015,6 +1015,84 @@
         margin-bottom: 70px;
       }
     }
+
+    /* 新增样式：横向按钮布局 */
+    .note-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .note-actions .btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      min-height: 36px;
+      min-width: auto;
+      flex: 1;
+      max-width: 120px;
+      justify-content: center;
+    }
+    
+    .note-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    
+    .note-content {
+      margin-top: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .reminder-badge {
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+    }
+    
+    .reminder-badge.alert {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      animation: alertPulse 1s infinite;
+    }
+    
+    .id-badge {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    
+    .completed-section {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .section-title {
+      font-weight: var(--font-weight-bold);
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
   </style>
 </head>
 <body>
@@ -1349,14 +1427,6 @@
       elements.mobileSearch = document.getElementById('mobileSearch');
       elements.mobileReminders = document.getElementById('mobileReminders');
       elements.mobileMenu = document.getElementById('mobileMenu');
-      
-      // 验证必需元素
-      const requiredElements = ['app', 'authModal', 'userAvatar', 'userDropdown', 'notes', 'datetime', 'lunar'];
-      for (const key of requiredElements) {
-        if (!elements[key]) {
-          console.warn(`Required element not found: ${key}`);
-        }
-      }
     }
 
     // UI文本
@@ -1583,7 +1653,6 @@
       }
     }
 
-    // 修复的 updateUserUI 函数
     function updateUserUI() {
       if (!elements.userDropdown || !elements.userAvatar) return;
       
@@ -2170,7 +2239,7 @@
       }
     }
 
-    // 渲染函数
+    // 渲染函数 - 修改为横向按钮布局
     function renderNotes(filter = '') {
       if (!elements.notes) return;
       
@@ -2196,26 +2265,47 @@
         
         const pack = currentLang === 'cn' ? UI.cn : UI.en;
         const createdDate = n.createdAt instanceof Date ? n.createdAt : new Date(n.createdAt);
-        const remindDisplay = n.remindAt ? 
-          `<span class='reminderTime'>${pack.reminder}: ${(n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)).toLocaleString()}</span>` : 
-          pack.noReminder;
-          
+        const hasReminder = n.remindAt;
+        const remindTime = hasReminder ? (n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)) : null;
+        const isAlert = hasReminder && remindTime <= new Date();
+        
         el.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:start">
+          <div class="note-header">
             <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
               <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
           </div>
-          <div style="margin-top:10px;color:var(--text-secondary);font-size:14px">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
-          <div style="margin-top:12px;display:flex;gap:10px;align-items:center" class="meta">
-            <div class="pill">${remindDisplay}</div>
-            <div class="pill">ID:${n.id.substring(0, 8)}</div>
+          
+          <div class="note-content">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
+          
+          <div class="note-meta">
+            ${hasReminder ? `
+              <div class="reminder-badge ${isAlert ? 'alert' : ''}">
+                ⏰ ${remindTime.toLocaleString()}
+              </div>
+            ` : ''}
+            <div class="id-badge">ID:${n.id.substring(0, 8)}</div>
             <div style="flex:1"></div>
-            <button class="btn btn-warning" data-action="set-reminder" data-id="${n.id}">${pack.setReminder}</button>
-            <button class="btn btn-success" data-action="edit" data-id="${n.id}">${pack.edit}</button>
-            <button class="btn" data-action="done" data-id="${n.id}">${pack.done}</button>
-            <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
+          </div>
+          
+          <div class="note-actions">
+            <button class="btn btn-warning" data-action="set-reminder" data-id="${n.id}">
+              <span>⏰</span>
+              <span>${pack.setReminder}</span>
+            </button>
+            <button class="btn btn-success" data-action="edit" data-id="${n.id}">
+              <span>✏️</span>
+              <span>${pack.edit}</span>
+            </button>
+            <button class="btn" data-action="done" data-id="${n.id}">
+              <span>✅</span>
+              <span>${pack.done}</span>
+            </button>
+            <button class="btn btn-danger" data-action="delete" data-id="${n.id}">
+              <span>🗑️</span>
+              <span>${pack.delete}</span>
+            </button>
           </div>
         `;
         elements.notes.appendChild(el);
@@ -2243,27 +2333,41 @@
       
       for (const n of completedNotes) {
         const el = document.createElement('div');
-        el.className = `completed-note`;
+        el.className = `note done`;
         
         const createdDate = n.createdAt instanceof Date ? n.createdAt : new Date(n.createdAt);
-        const remindDisplay = n.remindAt ? 
-          `<span class='reminderTime'>${pack.reminder}: ${(n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)).toLocaleString()}</span>` : 
-          pack.noReminder;
-          
+        const hasReminder = n.remindAt;
+        const remindTime = hasReminder ? (n.remindAt instanceof Date ? n.remindAt : new Date(n.remindAt)) : null;
+        
         el.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:start">
+          <div class="note-header">
             <div class="note-title" style="font-weight:700;font-size:16px;color:var(--text)">${escapeHtml(n.title)}</div>
             <div style="text-align:right">
               <div class="pill">${createdDate.toLocaleString()}</div>
             </div>
           </div>
-          <div style="margin-top:10px;color:var(--text-secondary);font-size:14px">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
-          <div style="margin-top:12px;display:flex;gap:10px;align-items:center" class="meta">
-            <div class="pill">${remindDisplay}</div>
-            <div class="pill">ID:${n.id.substring(0, 8)}</div>
+          
+          <div class="note-content">${escapeHtml(n.content).replace(/\n/g, '<br/>')}</div>
+          
+          <div class="note-meta">
+            ${hasReminder ? `
+              <div class="reminder-badge">
+                ⏰ ${remindTime.toLocaleString()}
+              </div>
+            ` : ''}
+            <div class="id-badge">ID:${n.id.substring(0, 8)}</div>
             <div style="flex:1"></div>
-            <button class="btn btn-success" data-action="undo-done" data-id="${n.id}">${pack.undoComplete}</button>
-            <button class="btn btn-danger" data-action="delete" data-id="${n.id}">${pack.delete}</button>
+          </div>
+          
+          <div class="note-actions">
+            <button class="btn btn-success" data-action="undo-done" data-id="${n.id}">
+              <span>↩️</span>
+              <span>${pack.undoComplete}</span>
+            </button>
+            <button class="btn btn-danger" data-action="delete" data-id="${n.id}">
+              <span>🗑️</span>
+              <span>${pack.delete}</span>
+            </button>
           </div>
         `;
         elements.completedNotesList.appendChild(el);
@@ -2365,7 +2469,7 @@
       if (elements.theme) elements.theme.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
-    // 修复的时间更新函数
+    // 时间更新函数
     function updateClock() {
       const now = new Date();
       if (elements.datetime) {
@@ -2376,7 +2480,7 @@
       }
     }
 
-    // 修复的农历日期计算函数
+    // 农历日期计算函数
     function getLunarDay(d) {
       if (currentLang === 'en') {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -2576,6 +2680,26 @@
       }
     }
 
+    // 设置跳过认证按钮
+    function setupSkipAuth() {
+      if (elements.skipAuth) {
+        elements.skipAuth.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          console.log("Skip auth clicked");
+          hideAuthModal();
+          loadLocalNotes();
+          
+          // 在iOS中可能需要手动触发一些UI更新
+          setTimeout(() => {
+            renderNotes();
+            updateStats();
+          }, 100);
+        });
+      }
+    }
+
     // 模态框功能
     function openReminderModal(noteId) {
       currentNoteId = noteId;
@@ -2624,14 +2748,13 @@
       // 初始化所有DOM元素引用
       initializeElements();
       
-      // 设置所有事件监听器
+      // 给iOS更多时间加载
       setTimeout(() => {
-        // 设置认证表单
+        // 设置所有事件监听器
+        setupSkipAuth();
+        setupAuthTabs();
         setupRegisterForm();
         setupLoginForm();
-        setupAuthTabs();
-        
-        // 设置笔记相关事件
         setupNoteEvents();
         setupModalEvents();
         setupMobileEvents();
@@ -2661,13 +2784,6 @@
               importNotes(e.target.files[0]);
               e.target.value = ''; // Reset file input
             }
-          });
-        }
-
-        if (elements.skipAuth) {
-          elements.skipAuth.addEventListener('click', () => {
-            hideAuthModal();
-            loadLocalNotes();
           });
         }
 
@@ -2735,17 +2851,17 @@
         applyLang();
         applyTheme();
         
-        // 修复：立即更新时间显示
+        // 立即更新时间显示
         updateClock();
         
-        // 修复：设置时间更新间隔
+        // 设置时间更新间隔
         setInterval(updateClock, 1000);
         
         setTimeout(checkReminders, 2000);
         updateUserUI();
         
         console.log("App initialized successfully");
-      }, 100);
+      }, 300);
     });
   </script>
 </body>
