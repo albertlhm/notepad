@@ -1171,6 +1171,61 @@
     .desktop-controls .btn {
       white-space: nowrap;
     }
+    
+    /* 移动端优化布局 */
+    .mobile-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .mobile-controls-top {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .mobile-controls-top .search-container {
+      flex: 1;
+    }
+    
+    .mobile-controls-top .user-menu {
+      display: flex;
+      align-items: center;
+    }
+    
+    .mobile-controls-bottom {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .mobile-controls-bottom .btn {
+      min-width: 44px;
+      justify-content: center;
+      padding: 8px;
+    }
+    
+    .mobile-controls-bottom .btn span:last-child {
+      display: none;
+    }
+    
+    /* 移动端用户头像样式 */
+    .mobile-user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      min-width: 36px;
+      min-height: 36px;
+    }
   </style>
 </head>
 <body>
@@ -1285,23 +1340,31 @@
         </div>
         
         <!-- 移动端控制栏 -->
-        <div class="mobile-controls-row mobile-only">
-          <div class="user-menu">
-            <div class="user-avatar" id="userAvatar">?</div>
-            <div class="user-dropdown" id="userDropdown">
-              <div class="user-dropdown-item" id="loginLink">
-                <span data-t="login">Login for Cloud Sync</span>
-              </div>
-              <div class="user-dropdown-item" id="exportLink">
-                <span data-t="exportData">Export Data</span>
-              </div>
-              <div class="user-dropdown-item" id="importLink">
-                <span data-t="importData">Import Data</span>
+        <div class="mobile-controls mobile-only">
+          <div class="mobile-controls-top">
+            <div class="search-container">
+              <input id="qMobile" class="search-input" placeholder="Search notes" />
+              <button class="btn" id="clearMobile">Clear</button>
+            </div>
+            <div class="user-menu">
+              <div class="mobile-user-avatar" id="userAvatar">?</div>
+              <div class="user-dropdown" id="userDropdown">
+                <div class="user-dropdown-item" id="loginLink">
+                  <span data-t="login">Login for Cloud Sync</span>
+                </div>
+                <div class="user-dropdown-item" id="exportLink">
+                  <span data-t="exportData">Export Data</span>
+                </div>
+                <div class="user-dropdown-item" id="importLink">
+                  <span data-t="importData">Import Data</span>
+                </div>
               </div>
             </div>
           </div>
-          <div class="btn" id="lang">中文</div>
-          <div class="btn" id="theme">🌙</div>
+          <div class="mobile-controls-bottom">
+            <div class="btn" id="langMobile">🌐</div>
+            <div class="btn" id="themeMobile">🌙</div>
+          </div>
         </div>
       </div>
     </header>
@@ -1369,11 +1432,11 @@
 
   <!-- 移动端底部导航 -->
   <div class="mobile-bottom-nav mobile-only">
-    <button class="btn" id="mobileNewNote">
+    <button class="btn" id="mobileNewNoteBottom">
       <span>📝</span>
       <span>New</span>
     </button>
-    <button class="btn" id="mobileSearch">
+    <button class="btn" id="mobileSearchBottom">
       <span>🔍</span>
       <span>Search</span>
     </button>
@@ -1497,11 +1560,15 @@
       elements.save = document.getElementById('save');
       elements.newNote = document.getElementById('newNote');
       elements.q = document.getElementById('q');
+      elements.qMobile = document.getElementById('qMobile');
       elements.clear = document.getElementById('clear');
+      elements.clearMobile = document.getElementById('clearMobile');
       elements.lang = document.getElementById('lang');
       elements.theme = document.getElementById('theme');
       elements.langDesktop = document.getElementById('langDesktop');
       elements.themeDesktop = document.getElementById('themeDesktop');
+      elements.langMobile = document.getElementById('langMobile');
+      elements.themeMobile = document.getElementById('themeMobile');
       
       // 时间显示元素
       elements.datetime = document.getElementById('datetime');
@@ -1530,7 +1597,8 @@
       
       // 移动端元素
       elements.mobileNewNote = document.getElementById('mobileNewNote');
-      elements.mobileSearch = document.getElementById('mobileSearch');
+      elements.mobileNewNoteBottom = document.getElementById('mobileNewNoteBottom');
+      elements.mobileSearchBottom = document.getElementById('mobileSearchBottom');
       elements.mobileReminders = document.getElementById('mobileReminders');
       elements.mobileMenu = document.getElementById('mobileMenu');
     }
@@ -2605,15 +2673,16 @@
       if (elements.newNote) elements.newNote.textContent = pack.newNote;
       if (elements.save) elements.save.textContent = pack.save;
       if (elements.clear) elements.clear.textContent = pack.clear;
+      if (elements.clearMobile) elements.clearMobile.textContent = pack.clear;
       if (elements.syncNow) elements.syncNow.textContent = pack.syncNow;
       
       // 更新占位符
       if (elements.title) elements.title.placeholder = pack.titlePlaceholder;
       if (elements.content) elements.content.placeholder = pack.contentPlaceholder;
       if (elements.q) elements.q.placeholder = pack.searchPlaceholder;
+      if (elements.qMobile) elements.qMobile.placeholder = pack.searchPlaceholder;
       
       // 更新语言切换按钮文本
-      if (elements.lang) elements.lang.textContent = currentLang === 'cn' ? 'EN' : '中文';
       if (elements.langDesktop) elements.langDesktop.textContent = currentLang === 'cn' ? 'EN' : '中文';
       
       // 更新同步状态
@@ -2623,8 +2692,8 @@
     function applyTheme() {
       document.documentElement.setAttribute('data-theme', theme);
       if (elements.app) elements.app.setAttribute('data-theme', theme);
-      if (elements.theme) elements.theme.textContent = theme === 'dark' ? '☀️' : '🌙';
       if (elements.themeDesktop) elements.themeDesktop.textContent = theme === 'dark' ? '☀️' : '🌙';
+      if (elements.themeMobile) elements.themeMobile.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
     // 时间更新函数
@@ -2811,11 +2880,21 @@
         });
       }
       
+      if (elements.mobileNewNoteBottom) {
+        elements.mobileNewNoteBottom.addEventListener('click', () => {
+          if (elements.title) {
+            elements.title.focus();
+            // 平滑滚动到编辑器
+            elements.editor.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      
       // 移动端搜索
-      if (elements.mobileSearch) {
-        elements.mobileSearch.addEventListener('click', () => {
-          if (elements.q) {
-            elements.q.focus();
+      if (elements.mobileSearchBottom) {
+        elements.mobileSearchBottom.addEventListener('click', () => {
+          if (elements.qMobile) {
+            elements.qMobile.focus();
           }
         });
       }
@@ -2993,6 +3072,13 @@
           });
         }
         
+        if (elements.qMobile) {
+          elements.qMobile.addEventListener('input', () => {
+            renderNotes(elements.qMobile.value);
+            renderCompletedNotes(elements.qMobile.value);
+          });
+        }
+        
         if (elements.clear) {
           elements.clear.addEventListener('click', () => {
             if (elements.q) elements.q.value = '';
@@ -3000,19 +3086,16 @@
             renderCompletedNotes();
           });
         }
-
-        // 语言切换
-        if (elements.lang) {
-          elements.lang.addEventListener('click', () => {
-            currentLang = currentLang === 'cn' ? 'en' : 'cn';
-            if (elements.app) elements.app.setAttribute('data-lang', currentLang);
-            applyLang();
-            renderNotes(elements.q ? elements.q.value : '');
-            renderCompletedNotes(elements.q ? elements.q.value : '');
-            renderReminders();
+        
+        if (elements.clearMobile) {
+          elements.clearMobile.addEventListener('click', () => {
+            if (elements.qMobile) elements.qMobile.value = '';
+            renderNotes();
+            renderCompletedNotes();
           });
         }
-        
+
+        // 语言切换
         if (elements.langDesktop) {
           elements.langDesktop.addEventListener('click', () => {
             currentLang = currentLang === 'cn' ? 'en' : 'cn';
@@ -3023,17 +3106,28 @@
             renderReminders();
           });
         }
+        
+        if (elements.langMobile) {
+          elements.langMobile.addEventListener('click', () => {
+            currentLang = currentLang === 'cn' ? 'en' : 'cn';
+            if (elements.app) elements.app.setAttribute('data-lang', currentLang);
+            applyLang();
+            renderNotes(elements.qMobile ? elements.qMobile.value : '');
+            renderCompletedNotes(elements.qMobile ? elements.qMobile.value : '');
+            renderReminders();
+          });
+        }
 
         // 主题切换
-        if (elements.theme) {
-          elements.theme.addEventListener('click', () => {
+        if (elements.themeDesktop) {
+          elements.themeDesktop.addEventListener('click', () => {
             theme = theme === 'dark' ? 'light' : 'dark';
             applyTheme();
           });
         }
         
-        if (elements.themeDesktop) {
-          elements.themeDesktop.addEventListener('click', () => {
+        if (elements.themeMobile) {
+          elements.themeMobile.addEventListener('click', () => {
             theme = theme === 'dark' ? 'light' : 'dark';
             applyTheme();
           });
