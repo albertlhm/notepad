@@ -762,7 +762,7 @@
     
     /* 登录相关样式 */
     .auth-modal {
-      display: flex;
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
@@ -1153,6 +1153,24 @@
     .search-input::placeholder {
       color: var(--muted);
     }
+    
+    /* 电脑版顶部控制栏布局 */
+    .desktop-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      justify-content: flex-end;
+    }
+    
+    .desktop-controls .search-container {
+      flex: 1;
+      max-width: 300px;
+    }
+    
+    .desktop-controls .btn {
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -1237,14 +1255,36 @@
         </div>
       </div>
       <div class="controls">
-        <div class="search search-container">
-          <input id="q" class="search-input" placeholder="Search notes" />
-          <button class="btn" id="clear">Clear</button>
+        <!-- 电脑版顶部控制栏 -->
+        <div class="desktop-controls desktop-only">
+          <div class="search-container">
+            <input id="q" class="search-input" placeholder="Search notes" />
+            <button class="btn" id="clear">Clear</button>
+          </div>
+          <div class="sync-status" id="syncStatus">
+            <div class="sync-indicator local" id="syncIndicator"></div>
+            <span id="syncText" data-t="local">Local</span>
+          </div>
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatarDesktop">?</div>
+            <div class="user-dropdown" id="userDropdownDesktop">
+              <div class="user-dropdown-item" id="loginLinkDesktop">
+                <span data-t="login">Login for Cloud Sync</span>
+              </div>
+              <div class="user-dropdown-item" id="exportLinkDesktop">
+                <span data-t="exportData">Export Data</span>
+              </div>
+              <div class="user-dropdown-item" id="importLinkDesktop">
+                <span data-t="importData">Import Data</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn" id="langDesktop">中文</div>
+          <div class="btn" id="themeDesktop">🌙</div>
+          <div class="btn" id="newNote">New Note</div>
         </div>
-        <div class="sync-status desktop-only" id="syncStatus">
-          <div class="sync-indicator local" id="syncIndicator"></div>
-          <span id="syncText" data-t="local">Local</span>
-        </div>
+        
+        <!-- 移动端控制栏 -->
         <div class="mobile-controls-row mobile-only">
           <div class="user-menu">
             <div class="user-avatar" id="userAvatar">?</div>
@@ -1263,24 +1303,6 @@
           <div class="btn" id="lang">中文</div>
           <div class="btn" id="theme">🌙</div>
         </div>
-        <div class="desktop-only">
-          <div class="user-menu">
-            <div class="user-avatar" id="userAvatarDesktop">?</div>
-            <div class="user-dropdown" id="userDropdownDesktop">
-              <div class="user-dropdown-item" id="loginLinkDesktop">
-                <span data-t="login">Login for Cloud Sync</span>
-              </div>
-              <div class="user-dropdown-item" id="exportLinkDesktop">
-                <span data-t="exportData">Export Data</span>
-              </div>
-              <div class="user-dropdown-item" id="importLinkDesktop">
-                <span data-t="importData">Import Data</span>
-              </div>
-            </div>
-          </div>
-          <div class="btn" id="langDesktop">中文</div>
-          <div class="btn" id="themeDesktop">🌙</div>
-        </div>
       </div>
     </header>
     <div class="topbar">
@@ -1290,7 +1312,7 @@
       </div>
       <div style="flex:1"></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div class="btn" id="newNote">New Note</div>
+        <div class="btn mobile-only" id="mobileNewNote">New Note</div>
         <div class="btn" id="syncNow" style="display:none">Sync Now</div>
         <input type="file" id="fileInput" class="file-input" accept=".json" />
       </div>
